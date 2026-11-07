@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Deal Financing Comparator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: brokerage worksheet. Deal inputs rail on the left, comparison ledger on the right; square corners, hairline rules, gold reserved for labels and the winner marks. */
+:root{
+  --bg:#FAF8F4; --card:#FFFFFF; --sunken:#F2F0EC;
+  --ink:#1C1C1C; --ink-2:#5A5A5A; --ink-3:#6B6B6B;
+  --rule:#E4E2DE; --rule-2:#C8C8C8;
+  --gold:#A87A32; --gold-text:#8E671F; --gold-soft:#FBF7F0; --gold-tint:#F4EADA;
+  --green:#2F6B4F; --green-soft:#EFF4F1;
+  --neg:#9B3A2F; --neg-soft:#F6E8E6;
+  --warn:#8A5A00; --warn-soft:#FBF1DC;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+  --font:"Roboto","Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.2,.6,.2,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141412; --card:#1C1B19; --sunken:#23221F;
+  --ink:#EEEBE5; --ink-2:#BDB8AE; --ink-3:#A39E95;
+  --rule:#33312D; --rule-2:#4A4741;
+  --gold:#BE9755; --gold-text:#CDA867; --gold-soft:#2A241A; --gold-tint:#352C1D;
+  --green:#6FB08F; --green-soft:#1C2A23;
+  --neg:#E08A7E; --neg-soft:#3A2220;
+  --warn:#E2B45A; --warn-soft:#352A14;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#141412; --card:#1C1B19; --sunken:#23221F;
+  --ink:#EEEBE5; --ink-2:#BDB8AE; --ink-3:#A39E95;
+  --rule:#33312D; --rule-2:#4A4741;
+  --gold:#BE9755; --gold-text:#CDA867; --gold-soft:#2A241A; --gold-tint:#352C1D;
+  --green:#6FB08F; --green-soft:#1C2A23;
+  --neg:#E08A7E; --neg-soft:#3A2220;
+  --warn:#E2B45A; --warn-soft:#352A14;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;font-variant-numeric:tabular-nums}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-text)}
+.caps{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+h1{font-size:34px;font-weight:600;line-height:1.15;letter-spacing:-.01em;margin:6px 0 0;text-wrap:balance}
+h2{font-size:20px;font-weight:600;margin:0;text-wrap:balance}
+h3{font-size:15px;font-weight:600;margin:0}
+.accent-rule{width:56px;height:2px;background:var(--gold);margin:14px 0 0}
+header .sub{color:var(--ink-2);max-width:72ch;margin:12px 0 0;font-size:15px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);margin:24px 0 20px;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-2);font:500 12px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;padding:14px 16px 12px;cursor:pointer;white-space:nowrap;transition:color 140ms var(--ease)}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold-text);outline-offset:2px}
+
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--card);border:1px solid var(--rule)}
+.panel-h{padding:16px 18px 12px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.panel-b{padding:16px 18px}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-size:12px;color:var(--ink-2)}
+.field .hint{font-size:11px;color:var(--ink-3)}
+.inrow{display:flex;align-items:center;border:1px solid var(--rule-2);border-radius:2px;background:var(--card)}
+.inrow:focus-within{border-color:var(--gold-text)}
+.inrow span{padding:0 8px;color:var(--ink-3);font-size:13px}
+input[type=number],input[type=text],select,textarea{font:inherit;color:var(--ink);background:transparent;border:0;padding:8px 8px;width:100%;min-width:0;outline:none}
+textarea{border:1px solid var(--rule-2);border-radius:2px;font-family:ui-monospace,Menlo,monospace;font-size:12px;min-height:120px;resize:vertical}
+select{border:1px solid var(--rule-2);border-radius:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.derived{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:4px 0 14px}
+.derived div{background:var(--sunken);padding:8px 10px}
+.derived b{display:block;font-size:15px;font-weight:600}
+.btn{appearance:none;font:500 11px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;padding:10px 12px;border-radius:2px;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);transition:background 140ms var(--ease)}
+.btn:hover{background:var(--gold-soft)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#fff}
+.btn.primary:hover{background:var(--gold-text);border-color:var(--gold-text)}
+.btn.ghost{border-color:var(--rule-2);color:var(--ink-2)}
+.btn.small{padding:7px 9px;font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule-2);border-radius:2px;padding:6px 8px;font-size:12px;cursor:pointer;user-select:none;color:var(--ink-2)}
+.chip input{margin:0;accent-color:var(--gold)}
+.chip.on{border-color:var(--ink-2);color:var(--ink)}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
+.tag{display:inline-block;font:500 10px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;padding:4px 6px;border:1px solid currentColor;border-radius:0}
+.tag.sample{color:var(--warn);background:var(--warn-soft);border-color:transparent}
+.tag.live{color:var(--green);background:var(--green-soft);border-color:transparent}
+.tag.proposed{color:var(--gold-text);background:var(--gold-tint);border-color:transparent}
+.tag.custom{color:var(--ink-2);background:var(--sunken);border-color:transparent}
+.tag.bad{color:var(--neg);background:var(--neg-soft);border-color:transparent}
+
+.results{display:grid;gap:20px;min-width:0}
+.leaders{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:700px){.leaders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.leader{background:var(--card);padding:14px 16px;display:grid;gap:4px;align-content:start}
+.leader .v{font-size:24px;font-weight:300;letter-spacing:-.01em;color:var(--ink)}
+.leader .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500}
+.leader .d{font-size:12px;color:var(--ink-3)}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--warn-soft);color:var(--ink);font-size:13px;border-left:0}
+.banner b{color:var(--warn)}
+
+.tablewrap{overflow-x:auto}
+table.cmp{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+.cmp th,.cmp td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+.cmp th:first-child,.cmp td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;white-space:normal;min-width:190px}
+.cmp thead th{vertical-align:bottom;border-bottom:2px solid var(--gold);font-weight:600}
+.cmp thead .pname{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.cmp thead .pname .nm{display:flex;align-items:center;gap:6px;font-size:13px}
+.cmp tr.grp td{background:var(--sunken);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);padding-top:10px}
+.cmp tr.grp td:first-child{background:var(--sunken)}
+.cmp td.best{font-weight:600;color:var(--green)}
+.cmp td.best::after{content:" ▲";font-size:9px}
+.cmp td.dim{color:var(--ink-3)}
+.cmp td .neg{color:var(--neg)}
+.cmp td .pos{color:var(--green)}
+.cmp .rl{display:block}
+.cmp .rh{display:block;font-size:11px;color:var(--ink-3);font-weight:400}
+.cmp col.inel{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--sunken) 6px 7px)}
+.flags{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+.chart-box{position:relative}
+.chart-box svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink-2);margin:0 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--rule-2);box-shadow:0 2px 4px rgba(18,18,18,.06),0 18px 48px rgba(18,18,18,.10);padding:8px 10px;font-size:12px;min-width:200px}
+.tip .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.tip .row span:first-child{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2)}
+.note{font-size:12px;color:var(--ink-3);margin:8px 0 0}
+
+/* formats */
+.fmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:16px}
+.fmt .panel-h .nm{display:flex;align-items:center;gap:8px}
+.fmt .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.fmt .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fmt .field{margin-bottom:8px}
+.fmt .field label{font-size:11px}
+.fmt .actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--rule)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.prose{max-width:76ch;font-size:15px;line-height:1.65;color:var(--ink)}
+.prose h2{margin:28px 0 8px}
+.prose p,.prose li{color:var(--ink-2)}
+.prose table{border-collapse:collapse;font-size:13px;margin:8px 0}
+.prose td,.prose th{border-bottom:1px solid var(--rule);padding:6px 12px 6px 0;text-align:left}
+.prose a{color:var(--gold-text)}
+.disclaimer{font-size:11px;line-height:1.6;color:var(--ink-3);border-top:1px solid var(--rule);margin-top:40px;padding-top:14px;max-width:110ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors</div>
+  <h1>Deal Financing Comparator</h1>
+  <div class="accent-rule"></div>
+  <p class="sub">Size the same deal under each financing format, see which constraint binds, what cash it takes to close, and how long each takes to pay that cash back. Formats are editable and new ones can be added as programs change.</p>
+</header>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" id="tab-compare" aria-selected="true" data-view="compare">Compare</button>
+  <button class="tab" role="tab" id="tab-formats" aria-selected="false" data-view="formats">Financing formats</button>
+  <button class="tab" role="tab" id="tab-notes" aria-selected="false" data-view="notes">Method &amp; sources</button>
+</div>
+
+<!-- COMPARE -->
+<section id="view-compare">
+<div class="layout">
+  <aside class="panel">
+    <div class="panel-h"><h2>The deal</h2><span id="sampleTag" class="tag sample">SAMPLE deal</span></div>
+    <div class="panel-b">
+      <div class="field"><label for="d-name">Deal name</label><div class="inrow"><input id="d-name" type="text"></div></div>
+      <div class="two">
+        <div class="field"><label for="d-units">Suites</label><div class="inrow"><input id="d-units" type="number" min="1" step="1"></div></div>
+        <div class="field"><label for="d-price">Purchase price</label><div class="inrow"><span>$</span><input id="d-price" type="number" step="10000"></div></div>
+      </div>
+      <div class="field"><label for="d-noi">Normalized NOI (yr 1)</label><div class="inrow"><span>$</span><input id="d-noi" type="number" step="1000"></div><div class="hint">After vacancy, management and capital reserve.</div></div>
+      <div class="derived">
+        <div><span class="caps">Cap rate</span><b id="o-cap">–</b></div>
+        <div><span class="caps">Price / suite</span><b id="o-pps">–</b></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="d-lv">Lending value vs price</label><div class="inrow"><input id="d-lv" type="number" step="0.5"><span>%</span></div><div class="hint">−5 = lender values 5% below price</div></div>
+        <div class="field"><label for="d-close">Closing costs</label><div class="inrow"><input id="d-close" type="number" step="0.1"><span>%</span></div><div class="hint">of purchase price</div></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="d-growth">NOI growth</label><div class="inrow"><input id="d-growth" type="number" step="0.25"><span>%/yr</span></div></div>
+        <div class="field"><label for="d-horizon">Chart horizon</label><div class="inrow"><input id="d-horizon" type="number" min="3" max="40" step="1"><span>yrs</span></div></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="d-nw">Borrower net worth</label><div class="inrow"><span>$</span><input id="d-nw" type="number" step="50000"></div></div>
+        <div class="field"><label for="d-ptax">Tax on premium</label><div class="inrow"><input id="d-ptax" type="number" step="0.5"><span>%</span></div><div class="hint">0 in Alberta</div></div>
+      </div>
+      <div class="field" style="margin-top:6px"><span class="caps">Formats to compare</span><div class="chips" id="chips"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn ghost small" id="btn-sample">Reload SAMPLE deal</button></div>
+    </div>
+  </aside>
+
+  <div class="results">
+    <div class="banner" id="rateBanner"><b>SAMPLE rates.</b>&nbsp;<span>Interest rates on the formats marked SAMPLE are placeholders. Replace them with current lender quotes under Financing formats before relying on any result.</span></div>
+    <div class="leaders" id="leaders"></div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>Side by side</h2><span class="caps">▲ best among eligible formats</span></div>
+      <div class="tablewrap"><table class="cmp" id="cmp"></table></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>Net cash position over time</h2><span class="caps">Cash in at close, recovered by cash flow + principal paydown</span></div>
+      <div class="panel-b">
+        <div class="legend" id="legend"></div>
+        <div class="chart-box" id="chartBox"><svg id="chart" viewBox="0 0 800 340" role="img" aria-label="Net cash position by year for each financing format"></svg><div class="tip" id="tip" hidden></div></div>
+        <p class="note">Where a line crosses zero, the cash invested at closing has come back through cash flow and principal paydown. Excludes appreciation and sale costs; assumes renewal at the same rate after the term.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FORMATS -->
+<section id="view-formats" hidden>
+  <div class="toolbar">
+    <button class="btn primary" id="btn-add">Add financing format</button>
+    <button class="btn ghost" id="btn-export">Export formats</button>
+    <button class="btn ghost" id="btn-import">Import formats</button>
+    <button class="btn ghost" id="btn-reset">Reset to defaults</button>
+    <span class="note" id="saveNote" style="margin:0">Changes save in this browser.</span>
+  </div>
+  <div class="panel" id="ioPanel" hidden style="margin-bottom:16px">
+    <div class="panel-h"><h3 id="ioTitle">Export</h3><button class="btn ghost small" id="io-close">Close</button></div>
+    <div class="panel-b">
+      <p class="note" id="ioHelp" style="margin:0 0 8px"></p>
+      <textarea id="io-text" spellcheck="false"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn small" id="io-act">Copy</button><span class="note" id="io-msg" style="margin:0"></span></div>
+    </div>
+  </div>
+  <div class="panel" id="confirmReset" hidden style="margin-bottom:16px">
+    <div class="panel-b" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span>Replace every format with the built-in defaults? Custom formats will be removed.</span><button class="btn small" id="reset-yes">Reset</button><button class="btn ghost small" id="reset-no">Keep my formats</button></div>
+  </div>
+  <div class="fmt-grid" id="fmtGrid"></div>
+</section>
+
+<!-- NOTES -->
+<section id="view-notes" hidden>
+<div class="prose">
+  <h2>How each format is sized</h2>
+  <p>Every format runs through the same engine. The loan is the lesser of the LTV cap on lending value and the loan the NOI can carry at the format's debt-coverage floor. For insured formats the premium is added to the loan and the coverage test is run on the total, so the premium and the loan size are solved together.</p>
+  <p>Payments use Canadian semi-annual compounding: monthly rate = (1 + annual rate ÷ 2)<sup>1/6</sup> − 1.</p>
+  <p>Insured premiums come from each format's LTV grid, plus the amortization surcharge for every 5 years beyond 25, less any MLI Select points discount. Application fees are per suite and paid in cash.</p>
+  <h2>What the payback figures mean</h2>
+  <table>
+    <tr><th>Metric</th><th>Definition</th></tr>
+    <tr><td>Cash in at close</td><td>Price + closing costs + lender fee + insurer application fee + premium tax − loan advanced (premium is financed)</td></tr>
+    <tr><td>Cash payback</td><td>Years until cumulative cash flow after debt service equals the cash in</td></tr>
+    <tr><td>Payback incl. paydown</td><td>Years until cumulative cash flow plus principal repaid equals the cash in</td></tr>
+    <tr><td>Premium payback, same loan</td><td>If you borrowed only the conventional loan amount through this format, the insurance cost divided by the yearly debt-service saving from the lower rate and longer amortization</td></tr>
+    <tr><td>Return on cash, horizon</td><td>(Cumulative cash flow + principal paydown) ÷ cash in, over the chart horizon</td></tr>
+  </table>
+  <h2>Built-in formats and their defaults</h2>
+  <p><b>Conventional.</b> 70% LTV, 25-year amortization, 1.25 DCR. Typical of ATB, credit unions and other Alberta balance-sheet lenders; terms vary by lender and borrower.</p>
+  <p><b>CMHC Standard Rental (MLI Market).</b> Up to 85% LTV on purchase, 40-year amortization, 1.10 DCR. Premium grid from the schedule effective for applications from July 14, 2025: 2.60% to 65% LTV, 2.85% to 70%, 3.35% to 75%, 4.35% to 80%, 5.35% to 85%, plus 0.25% per 5 years of amortization beyond 25.</p>
+  <p><b>CMHC MLI Select 50 / 70 / 100.</b> Same base grid extended to 5.90% (to 90%) and 6.15% (above 90%), with 10% / 20% / 30% premium discounts by points tier. Default LTV and amortization by tier (85%/40, 95%/45, 95%/50) follow the new-construction pattern; existing-building limits are tighter in some tiers, so confirm against the current CMHC MLI Select terms for the specific deal. The "NOI adjustment" field lets you haircut income for affordability commitments, which run at least 10 years and bind a future buyer.</p>
+  <p><b>Private insured, 5–50 suites (Budget 2026, proposed).</b> Budget 2026 proposes letting private mortgage insurers insure rental properties of 5 to 50 units: up to 85% LTV and 40-year amortization for existing properties (90% and 50 years for new construction), DCR of 1.15 on 5-year terms and 1.10 on 10-year terms, borrower net worth of at least 25% of the loan with a $100,000 minimum, and no bundling of separately titled properties to reach the unit count. Lenders can submit applications from February 1, 2027. No premium schedule has been published, so this format borrows the CMHC Standard grid as a <b>SAMPLE</b> placeholder; edit it once Sagen, Canada Guaranty or others publish pricing.</p>
+  <h2>Adding a format</h2>
+  <p>Use <b>Add financing format</b> or <b>Duplicate</b> on an existing card. Every format is a set of parameters: LTV cap, amortization, term, rate, DCR floor, lender fee, application fee, premium grid, surcharge, discount, NOI adjustment, unit range and net-worth test. Export the formats to share a set with the team; import to load one.</p>
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://www.canadianmortgagetrends.com/2026/11/budget-2026-explained-12-changes-for-housing-mortgages-and-banking/" target="_blank" rel="noopener">Canadian Mortgage Trends: Budget 2026 explained</a></li>
+    <li><a href="https://beinsure.com/news/canada-expands-mortgage-insurance-for-multi-unit-housing/" target="_blank" rel="noopener">Beinsure: Canada expands mortgage insurance for multi-unit housing</a></li>
+    <li><a href="https://www.connectcre.ca/stories/ottawa-opens-50-unit-apartment-financing-to-private-insurers/" target="_blank" rel="noopener">Connect CRE: Ottawa opens 50-unit apartment financing to private insurers</a></li>
+    <li><a href="https://www.reic.ca/article-sept5-25.html" target="_blank" rel="noopener">REIC: How new CMHC premiums impact your pro forma</a></li>
+    <li><a href="https://www.cmhc-schl.gc.ca/media-newsroom/notices/2025/cmhc-to-update-multi-unit-mortgage-loan-insurance-premiums" target="_blank" rel="noopener">CMHC: Update to multi-unit mortgage loan insurance premiums</a></li>
+  </ul>
+  <p>Verify current CMHC parameters, premiums and lender rates before using any figure with a client. This is a financing comparison tool, not lending, legal or tax advice.</p>
+</div>
+</section>
+
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const STORE_KEY="caa-fin-formats-v1", DEAL_KEY="caa-fin-deal-v1";
+const SERIES=["--s1","--s2","--s3","--s4","--s5","--s6","--s7","--s8"];
+
+const GRID_STD="65:2.60, 70:2.85, 75:3.35, 80:4.35, 85:5.35";
+const GRID_SEL="65:2.60, 70:2.85, 75:3.35, 80:4.35, 85:5.35, 90:5.90, 95:6.15";
+
+/* ---- The format registry. Add a new financing format by adding an object here (or in the app). ---- */
+const DEFAULT_FORMATS=[
+ {id:"conv",name:"Conventional",status:"live",insurer:"None (balance-sheet lender)",maxLTV:70,amort:25,term:5,rate:5.25,rateSample:true,dscr:1.25,lenderFee:1.0,appFee:0,grid:"",surcharge:0,discount:0,noiAdj:0,minUnits:1,maxUnits:0,nwPct:0,nwMin:0,color:0,
+  notes:"Faster to close than insured debt; full recourse is typical."},
+ {id:"std",name:"CMHC Standard",status:"live",insurer:"CMHC (MLI Market)",maxLTV:85,amort:40,term:10,rate:4.15,rateSample:true,dscr:1.10,lenderFee:0.5,appFee:150,grid:GRID_STD,surcharge:0.25,discount:0,noiAdj:0,minUnits:5,maxUnits:0,nwPct:25,nwMin:100000,color:1,
+  notes:"Certificate takes weeks to months; build it into condition dates."},
+ {id:"sel50",name:"MLI Select 50",status:"live",insurer:"CMHC (MLI Select)",maxLTV:85,amort:40,term:10,rate:4.15,rateSample:true,dscr:1.10,lenderFee:0.5,appFee:150,grid:GRID_SEL,surcharge:0.25,discount:10,noiAdj:-2,minUnits:5,maxUnits:0,nwPct:25,nwMin:100000,color:2,
+  notes:"NOI adjustment is a SAMPLE haircut for affordability rents. Commitments bind future owners."},
+ {id:"sel70",name:"MLI Select 70",status:"live",insurer:"CMHC (MLI Select)",maxLTV:95,amort:45,term:10,rate:4.15,rateSample:true,dscr:1.10,lenderFee:0.5,appFee:150,grid:GRID_SEL,surcharge:0.25,discount:20,noiAdj:-3,minUnits:5,maxUnits:0,nwPct:25,nwMin:100000,color:3,
+  notes:"Verify tier limits for existing buildings; NOI adjustment is SAMPLE."},
+ {id:"sel100",name:"MLI Select 100",status:"live",insurer:"CMHC (MLI Select)",maxLTV:95,amort:50,term:10,rate:4.15,rateSample:true,dscr:1.10,lenderFee:0.5,appFee:150,grid:GRID_SEL,surcharge:0.25,discount:30,noiAdj:-5,minUnits:5,maxUnits:0,nwPct:25,nwMin:100000,color:4,
+  notes:"Limited recourse available at this tier. Verify existing-building limits; NOI adjustment is SAMPLE."},
+ {id:"priv",name:"Private insured 5–50",status:"proposed",insurer:"Private insurer (Budget 2026)",maxLTV:85,amort:40,term:5,rate:4.25,rateSample:true,dscr:1.15,lenderFee:0.5,appFee:150,grid:GRID_STD,surcharge:0.25,discount:0,noiAdj:0,minUnits:5,maxUnits:50,nwPct:25,nwMin:100000,color:5,
+  effective:"2027-02-01",
+  notes:"Applications from Feb 1, 2027. DCR 1.15 on 5-yr terms, 1.10 on 10-yr. Premium grid and application fee are SAMPLE placeholders copied from CMHC Standard."}
+];
+const SAMPLE_DEAL={name:"SAMPLE – 24-suite walk-up",units:24,price:4800000,noi:288000,lv:0,close:1.5,growth:2.5,horizon:15,nw:2500000,ptax:0,isSample:true,show:null};
+
+let formats=load(STORE_KEY)||clone(DEFAULT_FORMATS);
+let deal=load(DEAL_KEY)||clone(SAMPLE_DEAL);
+if(!deal.show) deal.show=formats.map(f=>f.id);
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function load(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+const $=s=>document.querySelector(s);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const colorOf=f=>css(SERIES[(f.color??0)%SERIES.length]);
+
+/* ---- formatting ---- */
+const money=v=>v==null||!isFinite(v)?"–":(v<0?"-$":"$")+Math.round(Math.abs(v)).toLocaleString("en-CA");
+const kmoney=v=>{if(!isFinite(v))return"–";const a=Math.abs(v),s=v<0?"-$":"$";return a>=1e6?s+(a/1e6).toFixed(2)+"M":a>=1e3?s+Math.round(a/1e3)+"K":s+Math.round(a)};
+const pct=(v,d=2)=>v==null||!isFinite(v)?"–":v.toFixed(d)+"%";
+const yrs=v=>v==null?"–":!isFinite(v)?"60+ yrs":v.toFixed(1)+" yrs";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---- Canadian mortgage math (semi-annual compounding) ---- */
+const mRate=r=>Math.pow(1+r/200,1/6)-1;
+function annualDSper$(rate,amort){const i=mRate(rate),n=amort*12;if(i===0)return 12/n;return 12*i/(1-Math.pow(1+i,-n))}
+function balance(L,rate,amort,months){const i=mRate(rate),n=amort*12;if(months>=n)return 0;const p=L*annualDSper$(rate,amort)/12;if(i===0)return L-p*months;const g=Math.pow(1+i,months);return L*g-p*(g-1)/i}
+
+function parseGrid(s){return String(s||"").split(/[,;\n]+/).map(t=>t.trim()).filter(Boolean).map(t=>{const[a,b]=t.split(":").map(Number);return{ltv:a,rate:b}}).filter(r=>isFinite(r.ltv)&&isFinite(r.rate)).sort((a,b)=>a.ltv-b.ltv)}
+function premiumRate(f,ltv){
+  const g=parseGrid(f.grid); if(!g.length) return 0;
+  const band=g.find(b=>ltv*100<=b.ltv+1e-6)||g[g.length-1];
+  const sur=Math.max(0,Math.ceil((f.amort-25)/5-1e-9))*(+f.surcharge||0);
+  return (band.rate+sur)*(1-(+f.discount||0)/100)/100;
+}
+
+/* ---- the engine: one deal + one format -> full result ---- */
+function run(f,d){
+  const V=d.price*(1+(+d.lv||0)/100);
+  const noi=d.noi*(1+(+f.noiAdj||0)/100);
+  const dsPer=annualDSper$(f.rate,f.amort);
+  const ltvCap=V*f.maxLTV/100;
+  const dscrTotal=noi/f.dscr/dsPer;
+  let base=Math.min(ltvCap,dscrTotal),pr=0;
+  for(let k=0;k<12;k++){pr=premiumRate(f,base/V);base=Math.min(ltvCap,dscrTotal/(1+pr))}
+  pr=premiumRate(f,base/V); if(base*(1+pr)>dscrTotal+1) base=dscrTotal/(1+pr);
+  base=Math.max(0,base);
+  const binding=ltvCap<=dscrTotal/(1+pr)+1?"LTV":"DCR";
+  const prem=base*pr, total=base+prem;
+  const ds=total*dsPer;
+  const lenderFee=base*(+f.lenderFee||0)/100;
+  const appFee=d.units*(+f.appFee||0);
+  const ptax=prem*(+d.ptax||0)/100;
+  const closing=d.price*(+d.close||0)/100;
+  const equity=d.price+closing+lenderFee+appFee+ptax-base;
+  const cf1=noi-ds;
+  // annual path
+  const H=60, path=[]; let cum=0,cumP=0,payCash=Infinity,payAll=Infinity;
+  for(let y=1;y<=H;y++){
+    const cf=noi*Math.pow(1+(+d.growth||0)/100,y-1)-ds;
+    const pp=balance(total,f.rate,f.amort,12*(y-1))-balance(total,f.rate,f.amort,12*y);
+    const prevC=cum,prevA=cum+cumP;
+    cum+=cf; cumP+=pp;
+    if(payCash===Infinity&&cum>=equity&&cf>0) payCash=y-1+(equity-prevC)/cf;
+    if(payAll===Infinity&&cum+cumP>=equity&&(cf+pp)>0) payAll=y-1+(equity-prevA)/(cf+pp);
+    path.push({y,cf,pp,net:cum+cumP-equity});
+  }
+  const hz=Math.min(+d.horizon||15,H), atH=path[hz-1];
+  const termBal=balance(total,f.rate,f.amort,12*f.term);
+  // eligibility
+  const flags=[];
+  if(d.units<f.minUnits) flags.push(`Needs ${f.minUnits}+ suites`);
+  if(f.maxUnits>0&&d.units>f.maxUnits) flags.push(`Max ${f.maxUnits} suites`);
+  const nwReq=Math.max(base*(+f.nwPct||0)/100,+f.nwMin||0);
+  if(nwReq>0&&d.nw<nwReq) flags.push(`Net worth below ${kmoney(nwReq)}`);
+  if(cf1<0) flags.push("Negative cash flow");
+  let pending=null;
+  if(f.status==="proposed"){pending=f.effective?`Not available until ${new Date(f.effective+"T12:00").toLocaleDateString("en-CA",{month:"short",day:"numeric",year:"numeric"})}`:"Proposed, not yet available"}
+  return {f,V,noi,ltvCap,dscrTotal:dscrTotal/(1+pr),binding,base,pr,prem,total,ltv:V?base/V:0,ds,dscrAct:ds?noi/ds:Infinity,lenderFee,appFee,ptax,equity,cf1,coc:equity>0?cf1/equity:Infinity,payCash,payAll,path,roeH:atH?(atH.net+equity)/equity:0,termBal,eligible:flags.filter(x=>x!=="Negative cash flow").length===0,flags,pending};
+}
+function vsConv(r,c){
+  if(!c||r.f.id===c.f.id) return null;
+  const L=c.base, ltv=L/r.V; let premPay=null;
+  if(ltv<=r.f.maxLTV/100+1e-9){
+    const pr=premiumRate(r.f,ltv), tot=L*(1+pr);
+    const save=c.ds-tot*annualDSper$(r.f.rate,r.f.amort);
+    const cost=L*pr*(1+(+deal.ptax||0)/100)+r.appFee+(L*(+r.f.lenderFee||0)/100-L*(+c.f.lenderFee||0)/100);
+    premPay=cost<=0?0:save>0?cost/save:Infinity;
+  }
+  return {extra:r.base-c.base,equitySaved:c.equity-r.equity,dCF:r.cf1-c.cf1,premPay};
+}
+
+/* ---- UI: deal inputs ---- */
+const F={name:"#d-name",units:"#d-units",price:"#d-price",noi:"#d-noi",lv:"#d-lv",close:"#d-close",growth:"#d-growth",horizon:"#d-horizon",nw:"#d-nw",ptax:"#d-ptax"};
+function fillDeal(){for(const k in F){$(F[k]).value=deal[k]}}
+for(const k in F){$(F[k]).addEventListener("input",e=>{deal[k]=k==="name"?e.target.value:parseFloat(e.target.value)||0;deal.isSample=false;save(DEAL_KEY,deal);render()})}
+$("#btn-sample").addEventListener("click",()=>{const show=deal.show;deal=clone(SAMPLE_DEAL);deal.show=show;save(DEAL_KEY,deal);fillDeal();render()});
+
+function renderChips(){
+  $("#chips").innerHTML=formats.map(f=>{const on=deal.show.includes(f.id);return `<label class="chip${on?" on":""}"><input type="checkbox" data-id="${f.id}"${on?" checked":""}><span class="sw" style="background:${colorOf(f)}"></span>${esc(f.name)}</label>`}).join("");
+  $("#chips").querySelectorAll("input").forEach(cb=>cb.addEventListener("change",()=>{const id=cb.dataset.id;deal.show=cb.checked?[...new Set([...deal.show,id])]:deal.show.filter(x=>x!==id);save(DEAL_KEY,deal);render()}));
+}
+
+/* ---- render compare ---- */
+let lastResults=[];
+function render(){
+  $("#sampleTag").hidden=!deal.isSample;
+  $("#o-cap").textContent=deal.price?pct(deal.noi/deal.price*100):"–";
+  $("#o-pps").textContent=deal.units?money(deal.price/deal.units):"–";
+  renderChips();
+  const shown=formats.filter(f=>deal.show.includes(f.id));
+  const res=shown.map(f=>run(f,deal));
+  lastResults=res;
+  const conv=res.find(r=>r.f.id==="conv")||res.find(r=>!parseGrid(r.f.grid).length);
+  res.forEach(r=>r.vs=vsConv(r,conv));
+  $("#rateBanner").hidden=!shown.some(f=>f.rateSample);
+  renderLeaders(res); renderTable(res,conv); renderChart(res);
+}
+function okFor(r){return r.eligible&&!r.pending}
+function renderLeaders(res){
+  const el=res.filter(okFor);
+  const pick=(fn,dir)=>el.length?el.reduce((a,b)=>(dir*(fn(b)-fn(a))>0?b:a)):null;
+  const items=[
+    ["Most loan proceeds",pick(r=>r.base,1),r=>money(r.base),r=>`${pct(r.ltv*100,1)} LTV · ${r.binding} binds`],
+    ["Least cash to close",pick(r=>r.equity,-1),r=>money(r.equity),r=>`${pct(r.equity/deal.price*100,1)} of price`],
+    ["Fastest payback",pick(r=>isFinite(r.payAll)?-r.payAll:-1e9,1),r=>yrs(r.payAll),r=>"cash flow + paydown"],
+    ["Best year-1 cash flow",pick(r=>r.cf1,1),r=>money(r.cf1),r=>`${pct(r.coc*100,1)} cash-on-cash`]
+  ];
+  const note=res.length&&!el.length?`<div class="leader" style="grid-column:1/-1"><span class="caps">No eligible format</span><span class="d">Every selected format has an eligibility flag. See the table below.</span></div>`:"";
+  $("#leaders").innerHTML=note||items.map(([t,r,v,d])=>`<div class="leader"><span class="caps">${t}</span>${r?`<span class="v">${v(r)}</span><span class="who"><span class="sw" style="background:${colorOf(r.f)}"></span>${esc(r.f.name)}</span><span class="d">${d(r)}</span>`:`<span class="d">–</span>`}</div>`).join("");
+}
+function renderTable(res,conv){
+  if(!res.length){$("#cmp").innerHTML=`<tbody><tr><td>Select at least one format.</td></tr></tbody>`;return}
+  const el=res.filter(okFor);
+  const best=(fn,dir)=>{if(el.length<2)return null;let b=null;el.forEach(r=>{const v=fn(r);if(v==null||!isFinite(v))return;if(b===null||dir*(v-fn(b))>1e-9)b=r});return b};
+  const rows=[
+    ["grp","Sizing"],
+    ["Lending value",r=>money(r.V)],
+    ["Max loan by LTV",r=>money(r.ltvCap),null,r=>`${r.f.maxLTV}% cap`],
+    ["Max loan by DCR",r=>money(r.dscrTotal),null,r=>`${r.f.dscr.toFixed(2)} floor`],
+    ["Binding constraint",r=>r.binding],
+    ["Loan advanced",r=>money(r.base),[r=>r.base,1]],
+    ["Loan-to-value",r=>pct(r.ltv*100,1)],
+    ["grp","Insurance and fees"],
+    ["Premium rate",r=>r.pr?pct(r.pr*100):"None",null,r=>r.f.discount?`after ${r.f.discount}% discount`:""],
+    ["Premium (financed)",r=>r.prem?money(r.prem):"–"],
+    ["Total loan incl. premium",r=>money(r.total)],
+    ["Lender + application fees",r=>money(r.lenderFee+r.appFee)],
+    ["grp","Debt service"],
+    ["Rate · amortization",r=>`${pct(+r.f.rate)} · ${r.f.amort} yr`,null,r=>`${r.f.term}-yr term${r.f.rateSample?" · SAMPLE rate":""}`],
+    ["Annual debt service",r=>money(r.ds),[r=>r.ds,-1]],
+    ["DCR at this loan",r=>isFinite(r.dscrAct)?r.dscrAct.toFixed(2):"–",null,r=>r.f.noiAdj?`on NOI ${r.f.noiAdj>0?"+":""}${r.f.noiAdj}%`:""],
+    ["Balance at term end",r=>money(r.termBal)],
+    ["grp","Cash and return"],
+    ["Cash in at close",r=>money(r.equity),[r=>r.equity,-1]],
+    ["Year-1 cash flow",r=>money(r.cf1),[r=>r.cf1,1]],
+    ["Cash-on-cash, yr 1",r=>isFinite(r.coc)?pct(r.coc*100,1):"–",[r=>r.coc,1]],
+    ["Cash payback",r=>yrs(r.payCash),[r=>r.payCash,-1]],
+    ["Payback incl. paydown",r=>yrs(r.payAll),[r=>r.payAll,-1]],
+    [`Return on cash, ${deal.horizon} yrs`,r=>isFinite(r.roeH)?pct(r.roeH*100,0):"–",[r=>r.roeH,1],null,"cash flow + paydown ÷ cash in"],
+  ];
+  if(conv){rows.push(["grp",`Versus ${conv.f.name}`],
+    ["Extra loan proceeds",r=>r.vs?sign(r.vs.extra):"–"],
+    ["Cash to close saved",r=>r.vs?sign(r.vs.equitySaved):"–"],
+    ["Year-1 cash flow difference",r=>r.vs?sign(r.vs.dCF):"–"],
+    ["Premium payback, same loan",r=>!r.vs||r.vs.premPay==null?"–":r.vs.premPay===Infinity?"Never":yrs(r.vs.premPay),null,null,`borrowing ${kmoney(conv.base)} through this format`]);}
+  rows.push(["grp","Eligibility"],["Status",r=>`<div class="flags">${r.pending?`<span class="tag proposed">${esc(r.pending)}</span>`:""}${r.flags.map(x=>`<span class="tag bad">${esc(x)}</span>`).join("")}${!r.pending&&!r.flags.length?`<span class="tag live">Eligible</span>`:""}</div>`]);
+  let h=`<colgroup><col>${res.map(r=>`<col${okFor(r)?"":` class="inel"`}>`).join("")}</colgroup><thead><tr><th>Per deal</th>${res.map(r=>`<th><div class="pname"><span class="nm"><span class="sw" style="background:${colorOf(r.f)}"></span>${esc(r.f.name)}</span><span class="tag ${r.f.status==="proposed"?"proposed":r.f.status==="custom"?"custom":"live"}">${r.f.status==="proposed"?"Proposed":r.f.status==="custom"?"Custom":"Available"}</span></div></th>`).join("")}</tr></thead><tbody>`;
+  for(const row of rows){
+    if(row[0]==="grp"){h+=`<tr class="grp"><td colspan="${res.length+1}">${esc(row[1])}</td></tr>`;continue}
+    const [label,fn,bestSpec,sub,hint]=row;
+    const b=bestSpec?best(bestSpec[0],bestSpec[1]):null;
+    h+=`<tr><td><span class="rl">${esc(label)}</span>${hint?`<span class="rh">${esc(hint)}</span>`:""}</td>${res.map(r=>{const s=sub?sub(r):"";return `<td class="${b===r?"best":okFor(r)?"":"dim"}">${fn(r)}${s?`<span class="rh">${esc(s)}</span>`:""}</td>`}).join("")}</tr>`;
+  }
+  $("#cmp").innerHTML=h+"</tbody>";
+}
+function sign(v){if(!isFinite(v))return"–";if(Math.abs(v)<0.5)return"$0";return `<span class="${v>0?"pos":"neg"}">${v>0?"+":""}${money(v)}</span>`}
+
+/* ---- chart ---- */
+function niceStep(range,count){const raw=range/count,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return(m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p}
+function renderChart(res){
+  const svg=$("#chart"),W=800,H=340,m={l:64,r:132,t:12,b:34};
+  const hz=Math.max(3,Math.min(40,Math.round(+deal.horizon||15)));
+  $("#legend").innerHTML=res.map(r=>`<span><span class="sw" style="background:${colorOf(r.f)}"></span>${esc(r.f.name)}${okFor(r)?"":" (not eligible)"}</span>`).join("");
+  if(!res.length){svg.innerHTML="";return}
+  const series=res.map(r=>({r,pts:[{y:0,v:-r.equity},...r.path.slice(0,hz).map(p=>({y:p.y,v:p.net}))]}));
+  let lo=Math.min(0,...series.flatMap(s=>s.pts.map(p=>p.v))),hi=Math.max(0,...series.flatMap(s=>s.pts.map(p=>p.v)));
+  const step=niceStep(hi-lo||1,5);lo=Math.floor(lo/step)*step;hi=Math.ceil(hi/step)*step;
+  const x=y=>m.l+(W-m.l-m.r)*y/hz, yv=v=>m.t+(H-m.t-m.b)*(hi-v)/(hi-lo);
+  const ink2=css("--ink-3"),rule=css("--rule"),ink=css("--ink"),card=css("--card");
+  let g="";
+  for(let v=lo;v<=hi+1e-6;v+=step){g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${yv(v)}" y2="${yv(v)}" stroke="${Math.abs(v)<1e-6?ink2:rule}" stroke-width="${Math.abs(v)<1e-6?1.25:1}"/><text x="${m.l-8}" y="${yv(v)+4}" text-anchor="end" font-size="11" fill="${ink2}">${kmoney(v)}</text>`}
+  const xs=hz<=10?1:hz<=20?2:5;
+  for(let y=0;y<=hz;y+=xs){g+=`<text x="${x(y)}" y="${H-12}" text-anchor="middle" font-size="11" fill="${ink2}">${y===0?"Close":"Yr "+y}</text>`}
+  // lines
+  series.forEach(s=>{const c=colorOf(s.r.f);const d=s.pts.map((p,i)=>(i?"L":"M")+x(p.y).toFixed(1)+","+yv(p.v).toFixed(1)).join("");g+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${okFor(s.r)?"":` stroke-dasharray="5 4"`}/>`;
+    if(isFinite(s.r.payAll)&&s.r.payAll<=hz){g+=`<circle cx="${x(s.r.payAll)}" cy="${yv(0)}" r="4.5" fill="${c}" stroke="${card}" stroke-width="2"/>`}});
+  // end labels with collision nudge
+  const ends=series.map(s=>({s,y:yv(s.pts[s.pts.length-1].v)})).sort((a,b)=>a.y-b.y);
+  for(let i=1;i<ends.length;i++){if(ends[i].y-ends[i-1].y<14)ends[i].y=ends[i-1].y+14}
+  const over=ends.length?ends[ends.length-1].y-(H-m.b):0;if(over>0)ends.forEach(e=>e.y-=over);
+  ends.forEach(e=>{g+=`<circle cx="${x(hz)}" cy="${yv(e.s.pts[e.s.pts.length-1].v)}" r="3" fill="${colorOf(e.s.r.f)}"/><text x="${x(hz)+8}" y="${e.y+4}" font-size="11" fill="${ink}">${esc(e.s.r.f.name.length>16?e.s.r.f.name.slice(0,15)+"…":e.s.r.f.name)}</text>`});
+  g+=`<line id="xh" x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" stroke="${ink2}" stroke-dasharray="3 3" visibility="hidden"/><rect id="hit" x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/>`;
+  svg.innerHTML=g;
+  const hit=svg.querySelector("#hit"),xh=svg.querySelector("#xh"),tip=$("#tip"),box=$("#chartBox");
+  const move=ev=>{const rc=svg.getBoundingClientRect();const px=(ev.clientX-rc.left)*W/rc.width;let y=Math.round((px-m.l)/(W-m.l-m.r)*hz);y=Math.max(0,Math.min(hz,y));
+    xh.setAttribute("x1",x(y));xh.setAttribute("x2",x(y));xh.setAttribute("visibility","visible");
+    tip.innerHTML=`<div class="caps" style="margin-bottom:4px">${y===0?"At close":"End of year "+y}</div>`+series.map(s=>`<div class="row"><span><span class="sw" style="background:${colorOf(s.r.f)}"></span>${esc(s.r.f.name)}</span><b>${money(s.pts[y].v)}</b></div>`).join("");
+    tip.hidden=false;const bx=box.getBoundingClientRect();let left=ev.clientX-bx.left+14;if(left+tip.offsetWidth>bx.width)left=ev.clientX-bx.left-tip.offsetWidth-14;tip.style.left=Math.max(0,left)+"px";tip.style.top=Math.max(0,ev.clientY-bx.top-20)+"px"};
+  hit.addEventListener("pointermove",move);hit.addEventListener("pointerdown",move);
+  hit.addEventListener("pointerleave",()=>{tip.hidden=true;xh.setAttribute("visibility","hidden")});
+}
+
+/* ---- formats editor ---- */
+const FIELDS=[
+ ["name","Name","text"],["insurer","Insurer / lender","text"],["status","Status","status"],
+ ["maxLTV","Max LTV %","num"],["amort","Amortization yrs","num"],["term","Term yrs","num"],
+ ["rate","Rate %","num"],["dscr","DCR floor","num"],["lenderFee","Lender fee %","num"],
+ ["appFee","App fee / suite $","num"],["surcharge","Amort surcharge % per 5 yrs >25","num"],["discount","Premium discount %","num"],
+ ["noiAdj","NOI adjustment %","num"],["minUnits","Min suites","num"],["maxUnits","Max suites (0 = none)","num"],
+ ["nwPct","Net worth % of loan","num"],["nwMin","Net worth minimum $","num"],["effective","Available from (YYYY-MM-DD)","text"]
+];
+function renderFormats(){
+  $("#fmtGrid").innerHTML=formats.map((f,i)=>`<div class="panel fmt" data-i="${i}">
+   <div class="panel-h"><span class="nm"><span class="sw" style="background:${colorOf(f)}"></span><h3>${esc(f.name)}</h3></span><span>${f.rateSample?`<span class="tag sample">SAMPLE rate</span> `:""}<span class="tag ${f.status==="proposed"?"proposed":f.status==="custom"?"custom":"live"}">${f.status==="proposed"?"Proposed":f.status==="custom"?"Custom":"Available"}</span></span></div>
+   <div class="panel-b"><div class="grid3">${FIELDS.map(([k,l,t])=>`<div class="field"${k==="name"||k==="insurer"?' style="grid-column:span 3"':""}><label for="f-${i}-${k}">${l}</label>${t==="status"?`<select id="f-${i}-${k}" data-k="${k}"><option value="live"${f.status==="live"?" selected":""}>Available</option><option value="proposed"${f.status==="proposed"?" selected":""}>Proposed</option><option value="custom"${f.status==="custom"?" selected":""}>Custom</option></select>`:`<div class="inrow"><input id="f-${i}-${k}" data-k="${k}" type="${t==="num"?"number":"text"}" step="any" value="${esc(f[k]??"")}"></div>`}</div>`).join("")}</div>
+   <div class="field"><label for="f-${i}-grid">Premium grid (max LTV : premium %, comma separated; blank = uninsured)</label><div class="inrow"><input id="f-${i}-grid" data-k="grid" type="text" value="${esc(f.grid)}"></div></div>
+   <div class="field"><label for="f-${i}-notes">Notes</label><div class="inrow"><input id="f-${i}-notes" data-k="notes" type="text" value="${esc(f.notes)}"></div></div></div>
+   <div class="actions"><button class="btn small" data-act="dup">Duplicate</button>${f.rateSample?`<button class="btn ghost small" data-act="confirm">Mark rate as quoted</button>`:""}<button class="btn ghost small" data-act="del">Remove</button></div></div>`).join("");
+  $("#fmtGrid").querySelectorAll(".fmt").forEach(card=>{
+    const i=+card.dataset.i;
+    card.querySelectorAll("[data-k]").forEach(inp=>inp.addEventListener("change",()=>{const k=inp.dataset.k;const isNum=FIELDS.find(x=>x[0]===k)?.[2]==="num";formats[i][k]=isNum?(parseFloat(inp.value)||0):inp.value;if(k==="rate")formats[i].rateSample=false;persist();if(k==="name"||k==="status"||k==="rate")renderFormats()}));
+    card.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.act;
+      if(a==="dup"){const c=clone(formats[i]);c.id="f"+Date.now().toString(36);c.name=formats[i].name+" (copy)";c.status="custom";c.color=nextColor();formats.splice(i+1,0,c);deal.show.push(c.id)}
+      if(a==="del"){deal.show=deal.show.filter(x=>x!==formats[i].id);formats.splice(i,1)}
+      if(a==="confirm"){formats[i].rateSample=false}
+      persist();renderFormats()}));
+  });
+}
+function nextColor(){const used=new Set(formats.map(f=>f.color));for(let c=0;c<8;c++)if(!used.has(c))return c;return formats.length%8}
+function persist(){save(STORE_KEY,formats);save(DEAL_KEY,deal);render()}
+$("#btn-add").addEventListener("click",()=>{const f={id:"f"+Date.now().toString(36),name:"New format",status:"custom",insurer:"",maxLTV:75,amort:30,term:5,rate:5,rateSample:true,dscr:1.2,lenderFee:1,appFee:0,grid:"",surcharge:0,discount:0,noiAdj:0,minUnits:1,maxUnits:0,nwPct:0,nwMin:0,color:nextColor(),notes:""};formats.push(f);deal.show.push(f.id);persist();renderFormats();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})});
+let ioMode="export";
+$("#btn-export").addEventListener("click",()=>{ioMode="export";$("#ioTitle").textContent="Export formats";$("#ioHelp").textContent="Copy this text and share it. A teammate can paste it under Import formats.";$("#io-text").value=JSON.stringify(formats,null,1);$("#io-act").textContent="Copy";$("#io-msg").textContent="";$("#ioPanel").hidden=false});
+$("#btn-import").addEventListener("click",()=>{ioMode="import";$("#ioTitle").textContent="Import formats";$("#ioHelp").textContent="Paste exported formats. They replace the current set.";$("#io-text").value="";$("#io-act").textContent="Load formats";$("#io-msg").textContent="";$("#ioPanel").hidden=false});
+$("#io-close").addEventListener("click",()=>{$("#ioPanel").hidden=true});
+$("#io-act").addEventListener("click",()=>{const ta=$("#io-text");
+  if(ioMode==="export"){navigator.clipboard?.writeText(ta.value).then(()=>{$("#io-msg").textContent="Copied."},()=>{ta.select();$("#io-msg").textContent="Selected. Press Ctrl/Cmd+C to copy."})||(ta.select())}
+  else{try{const a=JSON.parse(ta.value);if(!Array.isArray(a)||!a.every(f=>f&&f.id&&f.name&&isFinite(f.maxLTV)))throw 0;formats=a;deal.show=a.map(f=>f.id);persist();renderFormats();$("#io-msg").textContent=`Loaded ${a.length} formats.`}catch(e){$("#io-msg").textContent="That text isn't an exported format list. Copy it again from Export formats."}}});
+$("#btn-reset").addEventListener("click",()=>{$("#confirmReset").hidden=false});
+$("#reset-no").addEventListener("click",()=>{$("#confirmReset").hidden=true});
+$("#reset-yes").addEventListener("click",()=>{formats=clone(DEFAULT_FORMATS);deal.show=formats.map(f=>f.id);persist();renderFormats();$("#confirmReset").hidden=true});
+
+/* ---- tabs ---- */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t?"true":"false"));
+  ["compare","formats","notes"].forEach(v=>$("#view-"+v).hidden=v!==t.dataset.view);
+  if(t.dataset.view==="formats")renderFormats(); if(t.dataset.view==="compare")render();
+}));
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",render);
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+fillDeal(); render();
+window.__caa={run,premiumRate,annualDSper$,balance,formats:()=>formats,deal:()=>deal};
+})();
+</script>
+</body></html>

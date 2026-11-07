@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CAA Tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<style>
+:root{--bg:#FAF8F4;--card:#FFFFFF;--ink:#1C1C1C;--ink-2:#5A5A5A;--rule:#E4E2DE;--gold:#A87A32;--gold-text:#8E671F;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141412;--card:#1C1B19;--ink:#EEEBE5;--ink-2:#BDB8AE;--rule:#33312D;--gold:#BE9755;--gold-text:#CDA867;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Roboto","Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:48px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-text)}
+h1{font-size:40px;font-weight:600;letter-spacing:-.01em;margin:6px 0 0;line-height:1.1}
+.rule{width:56px;height:2px;background:var(--gold);margin:16px 0 20px}
+p{color:var(--ink-2);max-width:62ch}
+ul{list-style:none;padding:0;margin:32px 0 0;border-top:1px solid var(--rule)}
+li a{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:18px 0;border-bottom:1px solid var(--rule);color:inherit;text-decoration:none}
+li a:hover .t{color:var(--gold-text)}
+.t{font-size:18px;font-weight:600}
+.d{grid-column:1;color:var(--ink-2);font-size:14px}
+.go{grid-row:1/3;grid-column:2;align-self:center;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text)}
+.disc{font-size:11px;color:var(--ink-2);margin-top:48px;border-top:1px solid var(--rule);padding-top:12px;max-width:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Canadian Apartment Advisors</div>
+  <h1>Apartment Investor Tools</h1>
+  <div class="rule"></div>
+  <p>Working calculators from the Canadian Apartment Advisors team for Alberta apartment owners and buyers.</p>
+  <ul>
+    <li><a href="financing-comparator.html"><span class="t">Deal Financing Comparator</span><span class="d">Conventional, CMHC Standard, MLI Select and the proposed private-insured format, sized side by side with cash to close and payback.</span><span class="go">Open</span></a></li>
+  </ul>
+  <p class="disc">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract.</p>
+</div>
+</body>
+</html>
