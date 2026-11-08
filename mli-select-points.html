@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>MLI Select Points Estimator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Score an existing apartment building under CMHC MLI Select: affordability, energy efficiency and accessibility points, and the tier benefits they unlock.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/mli-select-points.html">
+<meta property="og:title" content="MLI Select Points Estimator | Canadian Apartment Advisors">
+<meta property="og:description" content="Score an existing apartment building under CMHC MLI Select: affordability, energy efficiency and accessibility points, and the tier benefits they unlock.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/mli-select-points.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>MLI Select Points Estimator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;Do I qualify?&rdquo;</p>
+  <p class="sub">MLI Select scores a building on affordability, energy efficiency and accessibility. Fifty points is the entry ticket; each tier up unlocks more leverage, longer amortization and a bigger premium discount.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is scored</h2>
+<p>Points from the three categories add up; a 20-year affordability commitment adds 30 bonus points to an affordability level. The total sets the tier: 50, 70 or 100 points.</p>
+<h3>Existing buildings, as summarized here</h3>
+<ul>
+<li><b>Affordability:</b> 40% / 60% / 80% of units at rents at or below 30% of median renter income for the market = 50 / 70 / 100 points. Minimum 10-year commitment with capped rent increases.</li>
+<li><b>Energy efficiency:</b> 15% / 25% / 40% reduction in energy use = 20 / 35 / 50 points, validated by an energy professional.</li>
+<li><b>Accessibility:</b> 20 or 30 points for accessible or universal-design units meeting CSA standards.</li>
+</ul>
+<p>CMHC has adjusted MLI Select criteria several times, including energy-code changes with a transition through September 30, 2026. Actual scoring depends on your market's median renter income, unit-by-unit rents, energy modelling and CMHC's current criteria.</p>
+<h3>Sources</h3>
+<ul><li><a href="https://www.cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/multi-unit-insurance/mli-select" rel="noopener">CMHC &mdash; MLI Select</a></li><li><a href="https://lendcity.ca/blog/mli-select-points-system-scoring-guide/" rel="noopener">LendCity &mdash; MLI Select points system</a></li><li><a href="https://greencasa.ca/mli-select-refinancing-existing-rentals/" rel="noopener">Green Casa &mdash; MLI Select refinancing for existing rentals</a></li></ul>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Point levels and tier benefits are indicative, drawn from industry summaries of the CMHC MLI Select program; confirm against current CMHC documentation before making commitments. Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"mli_points",page:"mli-select-points.html",
+groups:[
+ {title:"Affordability",fields:[
+  {k:"aff",label:"Affordability commitment",def:"0",type:"select",options:[["0","None"],["50","Level 1 — 40% of units affordable · 50 pts"],["70","Level 2 — 60% of units affordable · 70 pts"],["100","Level 3 — 80% of units affordable · 100 pts"]],hint:"Affordable = rent at or below 30% of median renter household income for your market. Minimum 10-year commitment; it stays with the building if you sell."},
+  {k:"y20",label:"Commitment length",def:"no",type:"select",options:[["no","10 years (minimum)"],["yes","20 years · +30 bonus points"]]}]},
+ {title:"Energy efficiency",fields:[
+  {k:"en",label:"Energy commitment (existing building)",def:"0",type:"select",options:[["0","None"],["20","Level 1 — 15% reduction · 20 pts"],["35","Level 2 — 25% reduction · 35 pts"],["50","Level 3 — 40% reduction · 50 pts"]],hint:"Reduction in energy consumption and GHG versus current performance, set and verified by a qualified energy professional."}]},
+ {title:"Accessibility",fields:[
+  {k:"ac",label:"Accessibility commitment",def:"0",type:"select",options:[["0","None"],["20","Level 1 · 20 pts"],["30","Level 2 · 30 pts"]],hint:"Level 1: e.g. 15% of units accessible (CSA B651) or universal design. Level 2: higher shares or full universal design."}]}
+],
+compute:function(v){
+ var a=+v.aff, bonus=(v.y20==="yes"&&a>0)?30:0, en=+v.en, ac=+v.ac, tot=a+bonus+en+ac;
+ var tiers=[{p:50,ltv:"Up to 85%",am:"Up to 40 yrs",d:"10%",rec:"Full"},{p:70,ltv:"Up to 95%",am:"Up to 45 yrs",d:"20%",rec:"Full"},{p:100,ltv:"Up to 95%",am:"Up to 50 yrs",d:"30%",rec:"Limited recourse available"}];
+ var got=null;tiers.forEach(function(t){if(tot>=t.p)got=t});
+ var next=tiers.find(function(t){return tot<t.p});
+ var tbl='<div class="tablewrap"><table class="tbl"><thead><tr><th>Tier</th><th>Max LTV</th><th>Max amortization</th><th>Premium discount</th><th>Recourse</th></tr></thead><tbody>'+
+   tiers.map(function(t){return '<tr'+(got&&got.p===t.p?' class="on"':'')+'><td>'+t.p+' pts'+(got&&got.p===t.p?' ✓':'')+'</td><td>'+t.ltv+'</td><td>'+t.am+'</td><td>'+t.d+'</td><td>'+t.rec+'</td></tr>'}).join("")+
+   '</tbody></table><p class="disclaimer" style="margin-top:6px">Indicative maximums. Refinances and some existing-building purchases are held to lower LTVs than new construction; confirm limits for the specific deal.</p></div>';
+ return {
+  leaders:[{label:"Total score",value:tot+" pts",tone:tot>=50?"good":"bad"},
+           {label:"Tier",value:got?got.p+"-point tier":"Not eligible",tone:got?"good":"bad"},
+           {label:next?"Points to "+next.p:"Top tier",value:next?(next.p-tot)+" pts":"—"}],
+  rows:[{h:"Scorecard"},
+   {l:"Affordability",v:String(a)},
+   {l:"20-year commitment bonus",v:"+"+bonus,sub:1},
+   {l:"Energy efficiency",v:String(en)},
+   {l:"Accessibility",v:String(ac)},
+   {l:"Total score",v:tot+" pts",strong:1,tone:tot>=50?"good":"bad"},
+   {h:"What the score unlocks"}],
+  extra:tbl,
+  note: tot>=50
+   ? "Affordability commitments bind the building for 10 to 20 years and follow it through a sale &mdash; a real covenant, not paperwork. They can also make the building worth more to the specific buyer who lives on this math. Model both sides before committing; the <a href=\"financing-comparator.html\">Deal Financing Comparator</a> sizes each tier."
+   : "Affordability is usually the shortest path to 50 points for existing Alberta buildings &mdash; many older properties already sit at qualifying rents without changing a thing. That's worth checking before assuming the program isn't for you."+((v.y20==="yes"&&a===0)?" (The 20-year bonus only counts alongside an affordability commitment.)":"")};
+}});
+})();
+</script>
+</body>
+</html>

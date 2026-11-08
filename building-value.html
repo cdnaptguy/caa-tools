@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Building Value Estimator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Income-approach value estimate for an Alberta apartment building: rents, vacancy and expenses to NOI, then value across a cap-rate band.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/building-value.html">
+<meta property="og:title" content="Building Value Estimator | Canadian Apartment Advisors">
+<meta property="og:description" content="Income-approach value estimate for an Alberta apartment building: rents, vacancy and expenses to NOI, then value across a cap-rate band.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/building-value.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Building Value Estimator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;What&#x27;s it worth?&rdquo;</p>
+  <p class="sub">A quick income-approach estimate. Enter rents and expenses, pick a cap rate, and see value across a band either side of it &mdash; the same sanity check we run before any opinion of value.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>Gross potential rent is suites &times; average rent &times; 12. Vacancy and bad debt are taken off rent and other income to get effective gross income. Operating expenses (per suite &times; suites) come off that to give net operating income (NOI). Value is NOI &divide; cap rate, shown at the midpoint and at the band either side.</p>
+<h3>What it leaves out</h3>
+<ul><li>Below-market rents (loss to lease) and the value a buyer may pay for that upside.</li><li>Deferred maintenance, capital needs and building condition.</li><li>Financing effects: buildings that qualify for CMHC-insured debt can attract buyers who price differently.</li></ul>
+<p>For the real thing we would use the CMHC Rental Market Survey, City of Edmonton or Calgary assessment data, and closed comparable sales.</p>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"building_value",page:"building-value.html",
+groups:[
+ {title:"Income",fields:[
+  {k:"suites",label:"Number of suites",def:24,step:1,min:1,pair:"start"},
+  {k:"rent",label:"Average rent per suite",def:1150,prefix:"$",suffix:"/mo",pair:"end"},
+  {k:"other",label:"Other income (laundry, parking)",def:9600,prefix:"$",suffix:"/yr"},
+  {k:"vac",label:"Vacancy & bad debt",def:4,suffix:"%",step:0.5,hint:"Use the CMHC Rental Market Survey vacancy for your zone as a floor, even if you're full today."}]},
+ {title:"Expenses",fields:[
+  {k:"opex",label:"Operating expenses per suite",def:5400,prefix:"$",suffix:"/yr",hint:"Include management (3.5–5% of income) and a capital reserve, even if you self-manage."}]},
+ {title:"Cap rate",fields:[
+  {k:"cap",label:"Cap rate (midpoint)",def:5.5,suffix:"%",step:0.05,pair:"start"},
+  {k:"band",label:"Band either side",def:0.5,suffix:"%",step:0.05,min:0,pair:"end"}]}
+],
+compute:function(v){
+ var gpr=v.suites*v.rent*12, egi=(gpr+v.other)*(1-v.vac/100), opex=v.suites*v.opex, noi=egi-opex;
+ var c=v.cap/100,b=Math.abs(v.band)/100;
+ var val=function(r){return r>0?noi/r:NaN};
+ var lo=val(c+b),mid=val(c),hi=val(c-b);
+ var per=v.suites>0?mid/v.suites:NaN, oer=egi>0?opex/egi:NaN;
+ return {
+  leaders:[{label:"Value @ "+v.cap.toFixed(2)+"% cap",value:f.money(mid),tone:noi>0?"good":"bad"},
+           {label:"Net operating income",value:f.money(noi)},
+           {label:"Value per suite",value:f.money(per)}],
+  rows:[{h:"Income to NOI"},
+   {l:"Gross potential rent",v:f.money(gpr)},
+   {l:"Other income",v:f.money(v.other),sub:1},
+   {l:"Vacancy & bad debt ("+v.vac+"%)",v:f.neg((gpr+v.other)*v.vac/100),sub:1},
+   {l:"Effective gross income",v:f.money(egi)},
+   {l:"Operating expenses",v:f.neg(opex)},
+   {l:"Expense ratio",v:f.pct(oer,1),sub:1},
+   {l:"Net operating income",v:f.money(noi),strong:1},
+   {h:"Value across the cap-rate band"},
+   {l:"Value @ "+(v.cap+Math.abs(v.band)).toFixed(2)+"% cap",v:f.money(lo)},
+   {l:"Value @ "+v.cap.toFixed(2)+"% cap",v:f.money(mid),strong:1,tone:"good"},
+   {l:"Value @ "+(v.cap-Math.abs(v.band)).toFixed(2)+"% cap",v:(v.cap-Math.abs(v.band))>0?f.money(hi):"–"},
+   {l:"Price per suite (midpoint)",v:f.money(per)}],
+  note: noi<=0 ? "Expenses exceed income as entered, so there is no income value to capitalize. Check the expense figure, or this is a land or redevelopment conversation rather than an income one."
+   : (oer>0.55 ? "An expense ratio above 55% is high for a typical Alberta walk-up. Either there's a cost problem worth fixing before a sale, or the expenses include one-time items a buyer would normalize out. Both change the value."
+   : "A cap rate applied to <em>normalized</em> NOI is only half the story. If rents are below market, or the building would qualify for CMHC MLI Select financing, the right buyer may pay above this band. That's the conversation worth having.")
+ };
+}});
+})();
+</script>
+</body>
+</html>

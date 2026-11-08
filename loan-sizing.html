@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Maximum Loan Sizing | CAA Apartment Investor Tools</title>
+<meta name="description" content="How much a lender will lend on an apartment building: the lesser of the LTV cap and the DSCR limit, with a CMHC versus conventional comparison.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/loan-sizing.html">
+<meta property="og:title" content="Maximum Loan Sizing | Canadian Apartment Advisors">
+<meta property="og:description" content="How much a lender will lend on an apartment building: the lesser of the LTV cap and the DSCR limit, with a CMHC versus conventional comparison.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/loan-sizing.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Maximum Loan Sizing</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;How much will they lend?&rdquo;</p>
+  <p class="sub">Lenders size loans to whichever binds first &mdash; leverage or coverage. Enter NOI to see the maximum loan, which constraint binds, and how insured sizing compares to a typical conventional structure.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>The DSCR limit is the loan whose annual payment equals NOI &divide; the coverage floor, using Canadian semi-annual compounding. The LTV limit is lending value &times; maximum LTV. The DSCR limit includes the capitalized insurance premium: divide it by (1 + premium rate) to find net proceeds. The lender advances the lesser of that net limit and the LTV limit.</p>
+<p>The conventional comparison runs the same test at SAMPLE terms (70% LTV, 25-year amortization, 1.25&times; DSCR, rate 0.75% above the insured rate) &mdash; edit them to match a real quote.</p>
+<h3>What it leaves out</h3>
+<ul><li>Automatic premium pricing by LTV and program. Enter the applicable premium from the <a href="cmhc-premium.html">CMHC Premium Calculator</a> or a lender quote, and recheck it if the resulting LTV changes. The <a href="financing-comparator.html">Deal Financing Comparator</a> also models premium bands.</li><li>Lender-specific underwriting of NOI, which is almost always lower than the owner's.</li></ul>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"loan_sizing",page:"loan-sizing.html",
+groups:[
+ {title:"The building",fields:[
+  {k:"noi",label:"Net operating income",def:190000,prefix:"$",suffix:"/yr",step:1000,hint:"Normalized NOI. The lender's underwriter adds vacancy, management and reserves whether you did or not."},
+  {k:"value",label:"Property value / lending value",def:3000000,prefix:"$",step:10000}]},
+ {title:"Insured loan terms",fields:[
+  {k:"rate",label:"Interest rate",def:4.5,suffix:"%",step:0.05,pair:"start"},
+  {k:"am",label:"Amortization",def:40,suffix:"yrs",step:1,min:5,max:50,pair:"end"},
+  {k:"dscr",label:"DSCR floor",def:1.1,suffix:"×",step:0.05,pair:"start",hint:"CMHC: about 1.10."},
+  {k:"ltv",label:"Maximum LTV",def:85,suffix:"%",step:1,pair:"end"},
+  {k:"prem",label:"Capitalized insurance premium",def:6.1,suffix:"%",step:0.05,min:0,max:100,hint:"SAMPLE 6.10%: standard 85% LTV / 40 years. Enter the rate for your actual loan; recheck if LTV or terms change."}]},
+ {title:"Conventional comparison (SAMPLE terms)",note:"SAMPLE assumptions typical of Alberta balance-sheet lenders; negotiable deal by deal.",fields:[
+  {k:"cltv",label:"LTV",def:70,suffix:"%",step:1,pair:"start"},
+  {k:"cam",label:"Amortization",def:25,suffix:"yrs",step:1,pair:"end"},
+  {k:"cdscr",label:"DSCR floor",def:1.25,suffix:"×",step:0.05,pair:"start"},
+  {k:"cspread",label:"Rate vs insured",def:0.75,suffix:"% higher",step:0.05,pair:"end"}]}
+],
+compute:function(v){
+ var factor=1+v.prem/100;
+ var byD=m.maxLoanFromNOI(v.noi,v.rate,v.am,v.dscr)/factor, byL=v.value*v.ltv/100;
+ var max=Math.min(byD,byL), bind=byD<byL?"DSCR":"LTV";
+ var pmt=m.payment(max*factor,v.rate,v.am), eff=v.value>0?max/v.value:NaN;
+ var cD=m.maxLoanFromNOI(v.noi,v.rate+v.cspread,v.cam,v.cdscr), cL=v.value*v.cltv/100, cMax=Math.min(cD,cL);
+ var delta=max-cMax;
+ return {
+  leaders:[{label:"Maximum net proceeds",value:f.money(max)},
+           {label:"Binding constraint",value:bind},
+           {label:"Extra vs conventional",value:f.money(delta),tone:delta>0?"good":""}],
+  rows:[{h:"Insured sizing"},
+   {l:"Max loan by DSCR ("+v.dscr.toFixed(2)+"×)",v:f.money(byD),tone:bind==="DSCR"?"bad":""},
+   {l:"Max loan by LTV ("+v.ltv+"%)",v:f.money(byL),tone:bind==="LTV"?"bad":""},
+   {l:"Maximum net proceeds",v:f.money(max),strong:1},
+   {l:"Capitalized premium",v:f.money(max*(factor-1))},
+   {l:"Total loan including premium",v:f.money(max*factor)},
+   {l:"Effective LTV",v:f.pct(eff,1)},
+   {l:"Monthly payment including premium",v:f.money(pmt)},
+   {h:"Conventional comparison (SAMPLE terms)"},
+   {l:"Max loan by DSCR ("+v.cdscr.toFixed(2)+"× @ "+(v.rate+v.cspread).toFixed(2)+"%)",v:f.money(cD),sub:1},
+   {l:"Max loan by LTV ("+v.cltv+"%)",v:f.money(cL),sub:1},
+   {l:"Conventional maximum",v:f.money(cMax)},
+   {l:"Extra proceeds from insured sizing",v:f.money(delta),strong:1,tone:delta>0?"good":""}],
+  note: bind==="DSCR"
+   ? "Coverage is your ceiling, not leverage &mdash; so every dollar of real NOI improvement adds several dollars of loan capacity (about "+f.money(m.maxLoanFromNOI(1000,v.rate,v.am,v.dscr)/factor)+" per $1,000 of NOI here). That's why lenders and buyers care about rent position before asking price."
+   : "Leverage is your ceiling &mdash; the income would carry more debt than the LTV cap allows. Buildings in this position often hold hidden financing value for a buyer who can use MLI Select at a higher LTV tier."};
+}});
+})();
+</script>
+</body>
+</html>

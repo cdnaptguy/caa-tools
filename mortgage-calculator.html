@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Commercial Mortgage Calculator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Canadian commercial mortgage payment, balance at term end and interest cost, with amortizations to 50 years for CMHC MLI Select.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/mortgage-calculator.html">
+<meta property="og:title" content="Commercial Mortgage Calculator | Canadian Apartment Advisors">
+<meta property="og:description" content="Canadian commercial mortgage payment, balance at term end and interest cost, with amortizations to 50 years for CMHC MLI Select.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/mortgage-calculator.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Commercial Mortgage Calculator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;What&#x27;s the payment?&rdquo;</p>
+  <p class="sub">Payment, balance at term end and interest cost &mdash; with amortizations to 50 years, because MLI Select changed what's possible. Semi-annual compounding, the way Canadian lenders calculate fixed-rate mortgages.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>Canadian fixed-rate mortgages compound semi-annually, not monthly. The monthly rate is (1 + annual rate &divide; 2)<sup>1/6</sup> &minus; 1, and the payment is the standard annuity payment at that rate over amortization &times; 12 months. The balance at term end is what's left after the term's payments.</p>
+<p>The &ldquo;full amortization&rdquo; interest assumes the same rate for the whole amortization, which never happens in practice &mdash; it's there to show the scale of the trade, not to forecast.</p>
+<p>Assumes monthly payments and a fixed rate for the term. Lender conventions on payment dates and interest adjustment can move figures slightly.</p>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"mortgage",page:"mortgage-calculator.html",
+groups:[
+ {title:"Loan",fields:[
+  {k:"p",label:"Loan amount",def:2250000,prefix:"$",step:10000},
+  {k:"rate",label:"Interest rate",def:4.5,suffix:"%",step:0.05},
+  {k:"am",label:"Amortization",def:50,suffix:"yrs",step:1,min:1,max:50,pair:"start",hint:"Up to 50 under CMHC MLI Select. Conventional: usually 25–30."},
+  {k:"term",label:"Term",def:5,suffix:"yrs",step:1,min:1,max:10,pair:"end"}]},
+ {title:"Compare against",fields:[
+  {k:"am2",label:"Comparison amortization",def:25,suffix:"yrs",step:1,min:1,max:50}]}
+],
+compute:function(v){
+ var term=Math.min(Math.max(v.term,0),v.am), months=term*12;
+ var pmt=m.payment(v.p,v.rate,v.am), bal=m.balanceAfter(v.p,v.rate,v.am,months);
+ var paid=pmt*months, prin=v.p-bal, int=paid-prin;
+ var pmt2=m.payment(v.p,v.rate,v.am2), bal2=m.balanceAfter(v.p,v.rate,v.am2,Math.min(term,v.am2)*12);
+ var diff=pmt2-pmt;
+ var lifeInt=pmt*v.am*12-v.p, lifeInt2=pmt2*v.am2*12-v.p;
+ return {
+  leaders:[{label:"Monthly payment",value:f.money(pmt)},
+           {label:"Balance at term end",value:f.money(bal)},
+           {label:"Monthly vs "+v.am2+"-yr am",value:(diff>=0?"+":"−")+f.money(Math.abs(diff)).replace("−",""),tone:diff>0?"good":"",sub:diff>0?"more cash flow each month":"less cash flow each month"}],
+  banner: v.term>v.am ? "The term is longer than the amortization, so the term has been capped at "+v.am+" years." : "",
+  rows:[{h:"Payments"},
+   {l:"Monthly payment ("+v.am+"-yr am)",v:f.money(pmt),strong:1},
+   {l:"Monthly payment ("+v.am2+"-yr am)",v:f.money(pmt2)},
+   {l:"Monthly cash flow difference",v:f.money(diff),tone:diff>0?"good":""},
+   {h:"Over the "+term+"-year term"},
+   {l:"Total paid",v:f.money(paid)},
+   {l:"Principal",v:f.money(prin),sub:1},
+   {l:"Interest",v:f.money(int),sub:1},
+   {l:"Balance at term end",v:f.money(bal),strong:1},
+   {l:"Balance at term end ("+v.am2+"-yr am)",v:f.money(bal2),sub:1},
+   {h:"Over the full amortization (if the rate held)"},
+   {l:"Total interest, "+v.am+"-yr am",v:f.money(lifeInt)},
+   {l:"Total interest, "+v.am2+"-yr am",v:f.money(lifeInt2)}],
+  note:"Long amortization is a cash-flow tool, not a free lunch &mdash; you trade equity build-up for monthly breathing room. Here that's "+f.money(Math.abs(bal-bal2))+(bal>bal2?" more":bal<bal2?" less":" difference in the amount")+" owing at the end of the term. On acquisitions where the spread between the CMHC rate and the cap rate is positive, that trade is often the whole investment thesis."};
+}});
+})();
+</script>
+</body>
+</html>

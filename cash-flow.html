@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Multifamily Cash Flow Calculator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Annual cash flow, DSCR, cash-on-cash return and principal paydown on an apartment purchase, using Canadian semi-annual-compounding mortgage math.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/cash-flow.html">
+<meta property="og:title" content="Multifamily Cash Flow Calculator | Canadian Apartment Advisors">
+<meta property="og:description" content="Annual cash flow, DSCR, cash-on-cash return and principal paydown on an apartment purchase, using Canadian semi-annual-compounding mortgage math.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/cash-flow.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Multifamily Cash Flow Calculator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;What does it earn?&rdquo;</p>
+  <p class="sub">Annual cash flow, debt coverage and cash-on-cash return on a purchase &mdash; using Canadian semi-annual-compounding mortgage math, not the U.S. formulas most online calculators quietly use.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>NOI is effective gross income (rent plus other income, less vacancy) minus operating expenses. Debt service uses Canadian semi-annual compounding: monthly rate = (1 + annual rate &divide; 2)<sup>1/6</sup> &minus; 1. Cash required is the down payment plus closing costs. Cash-on-cash is annual cash flow &divide; cash required; the paydown return adds year-one principal repaid.</p>
+<p>Break-even occupancy is the share of potential income needed to cover operating expenses and debt service.</p>
+<h3>What it leaves out</h3>
+<ul><li>CMHC premiums (see the <a href="cmhc-premium.html">CMHC Premium Calculator</a>) and how insured debt is sized (see <a href="loan-sizing.html">Maximum Loan Sizing</a>).</li><li>Income tax, CCA, rent growth and capital spending after closing.</li></ul>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"cash_flow",page:"cash-flow.html",
+groups:[
+ {title:"Purchase",fields:[
+  {k:"price",label:"Purchase price",def:3000000,prefix:"$",step:10000},
+  {k:"close",label:"Closing costs",def:1.5,suffix:"% of price",step:0.1,hint:"Legal, appraisal, lender and CMHC application fees, land title. No land transfer tax in Alberta."}]},
+ {title:"Income & expenses",fields:[
+  {k:"suites",label:"Suites",def:24,step:1,min:1,pair:"start"},
+  {k:"rent",label:"Avg rent",def:1150,prefix:"$",suffix:"/mo",pair:"end"},
+  {k:"other",label:"Other income",def:9600,prefix:"$",suffix:"/yr",pair:"start"},
+  {k:"vac",label:"Vacancy",def:4,suffix:"%",step:0.5,pair:"end"},
+  {k:"opex",label:"Operating expenses per suite",def:5400,prefix:"$",suffix:"/yr"}]},
+ {title:"Financing",fields:[
+  {k:"ltv",label:"Loan-to-value",def:75,suffix:"%",step:1,hint:"Conventional Alberta lenders: typically 65–75%. CMHC-insured: up to 85%, higher under MLI Select."},
+  {k:"rate",label:"Interest rate",def:4.75,suffix:"%",step:0.05,pair:"start"},
+  {k:"am",label:"Amortization",def:30,suffix:"yrs",step:1,min:5,max:50,pair:"end"}]}
+],
+compute:function(v){
+ var gpr=v.suites*v.rent*12, egi=(gpr+v.other)*(1-v.vac/100), noi=egi-v.suites*v.opex;
+ var loan=v.price*v.ltv/100, closing=v.price*v.close/100, equity=v.price-loan+closing;
+ var pmt=m.payment(loan,v.rate,v.am), ads=pmt*12, cf=noi-ads, dscr=ads>0?noi/ads:Infinity;
+ var coc=equity>0?cf/equity:NaN, capIn=v.price>0?noi/v.price:NaN;
+ var prin=loan-m.balanceAfter(loan,v.rate,v.am,12), tot=equity>0?(cf+prin)/equity:NaN;
+ var be=egi>0?(v.suites*v.opex+ads)/(gpr+v.other):NaN;
+ var dTone=!isFinite(dscr)?"":dscr>=1.2?"good":dscr>=1.1?"":"bad";
+ var note;
+ if(isFinite(dscr)&&dscr<1.1) note="Below a 1.10&times; DSCR this deal won't finance as structured &mdash; CMHC floors at about 1.10 and conventional lenders want 1.20&ndash;1.25. Lower the leverage, lengthen the amortization, or revisit the price.";
+ else if(isFinite(dscr)&&dscr<1.25) note="This DSCR clears CMHC territory but is tight for conventional lenders (1.20&ndash;1.25 floors). CMHC-insured debt is the natural fit &mdash; which changes the timeline: certificates take weeks to months, so build that into your condition dates.";
+ else note="Comfortable coverage. The question becomes whether the leverage is working hard enough &mdash; a CMHC comparison often finds cheaper debt at higher LTV. Try the <a href=\"financing-comparator.html\">Deal Financing Comparator</a>.";
+ return {
+  leaders:[{label:"Annual cash flow",value:f.money(cf),tone:cf>=0?"good":"bad"},
+           {label:"DSCR",value:f.times(dscr),tone:dTone},
+           {label:"Cash-on-cash",value:f.pct(coc,1)}],
+  rows:[{h:"Operations"},
+   {l:"Net operating income",v:f.money(noi)},
+   {l:"Going-in cap rate",v:f.pct(capIn)},
+   {l:"Break-even occupancy",v:f.pct(be,1),sub:1},
+   {h:"Financing"},
+   {l:"Loan amount",v:f.money(loan)},
+   {l:"Cash required (down payment + closing)",v:f.money(equity)},
+   {l:"Monthly payment",v:f.money(pmt)},
+   {l:"Annual debt service",v:f.neg(ads)},
+   {l:"DSCR",v:f.times(dscr),tone:dTone},
+   {h:"Returns"},
+   {l:"Annual cash flow",v:f.money(cf),strong:1,tone:cf>=0?"good":"bad"},
+   {l:"Cash-on-cash return",v:f.pct(coc,1)},
+   {l:"Year 1 principal paydown",v:f.money(prin)},
+   {l:"Year 1 return incl. paydown",v:f.pct(tot,1)}],
+  note:note};
+}});
+})();
+</script>
+</body>
+</html>

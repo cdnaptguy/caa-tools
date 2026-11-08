@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Renovation Lift Calculator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Value-add math for apartment suite renovations: cost, rent lift, downtime, yield on cost and value created at your cap rate.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/renovation-lift.html">
+<meta property="og:title" content="Renovation Lift Calculator | Canadian Apartment Advisors">
+<meta property="og:description" content="Value-add math for apartment suite renovations: cost, rent lift, downtime, yield on cost and value created at your cap rate.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/renovation-lift.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Renovation Lift Calculator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;Is the upgrade worth it?&rdquo;</p>
+  <p class="sub">The value-add question on one screen: spend this much per suite, get this much more rent &mdash; what did that do to the building's value? It's the loss-to-lease math buyers run on your building. Run it first.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>All-in cost is renovation cost plus rent lost while suites sit empty. The annual rent lift is capitalized at the cap rate to give value created; net gain is value created less all-in cost. Yield on cost is the annual lift &divide; all-in cost.</p>
+<h3>What it leaves out</h3>
+<ul><li>Financing costs during the programme, turnover costs and leasing time beyond the vacancy months entered.</li><li>Any change in operating expenses after renovation.</li></ul>
+<p>Assumes the full lift is achievable and capitalizes at the stated rate. Alberta has no rent control: one increase per 12 months with proper notice under the Residential Tenancies Act.</p>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"reno_lift",page:"renovation-lift.html",
+groups:[
+ {title:"Programme",fields:[
+  {k:"units",label:"Suites to renovate",def:12,step:1,min:1,pair:"start"},
+  {k:"cost",label:"Cost per suite",def:18000,prefix:"$",step:500,pair:"end"},
+  {k:"lift",label:"Rent lift per suite",def:250,prefix:"$",suffix:"/mo",hint:"Use achieved rents on renovated comparables, not asking rents."}]},
+ {title:"Downtime",fields:[
+  {k:"rent",label:"Current rent",def:1150,prefix:"$",suffix:"/mo",pair:"start"},
+  {k:"down",label:"Vacant per suite",def:1,suffix:"months",step:0.5,min:0,pair:"end"}]},
+ {title:"Valuation",fields:[
+  {k:"cap",label:"Cap rate",def:5.5,suffix:"%",step:0.05}]}
+],
+compute:function(v){
+ var reno=v.units*v.cost, lost=v.units*v.rent*v.down, tc=reno+lost;
+ var lift=v.units*v.lift*12, val=v.cap>0?lift/(v.cap/100):NaN, net=val-tc;
+ var per=tc>0?val/tc:NaN, yoc=tc>0?lift/tc:NaN, pay=lift>0?tc/lift:NaN, liftPct=v.rent>0?v.lift/v.rent:NaN;
+ var note = per>=2 ? "Above $2 of value per $1 spent is a strong programme &mdash; and it compounds: the higher NOI also supports more debt, which can fund the next phase. The risk isn't the math, it's execution: achieved rents, downtime and cost creep."
+  : per>=1.2 ? "Positive but thin. At this spread an aggressive cost estimate or a soft rent assumption erases the gain. Tighten scope to items that actually move rent &mdash; kitchens and flooring usually do; common-area cosmetics usually don't."
+  : "This programme destroys value as modelled &mdash; the rent lift doesn't justify the spend at this cap rate. Sometimes the better move is selling the upside to a buyer who prices it differently, rather than funding it yourself.";
+ return {
+  leaders:[{label:"Net value gain",value:f.money(net),tone:net>=0?"good":"bad"},
+           {label:"Value per $1 spent",value:isFinite(per)?"$"+per.toFixed(2):"–"},
+           {label:"Yield on cost",value:f.pct(yoc,1)}],
+  rows:[{h:"Cost"},
+   {l:"Renovation cost",v:f.neg(reno)},
+   {l:"Lost rent while vacant",v:f.neg(lost),sub:1},
+   {l:"All-in cost",v:f.neg(tc),strong:1},
+   {h:"Return"},
+   {l:"Annual rent lift",v:f.money(lift)},
+   {l:"Lift as % of current rent",v:f.pct(liftPct,1),sub:1},
+   {l:"Yield on all-in cost",v:f.pct(yoc,1)},
+   {l:"Value created @ "+v.cap.toFixed(2)+"% cap",v:f.money(val),strong:1},
+   {l:"Net value gain after cost",v:f.money(net),strong:1,tone:net>=0?"good":"bad"},
+   {l:"Value created per $1 spent",v:isFinite(per)?"$"+per.toFixed(2):"–"},
+   {l:"Simple payback (rent alone)",v:f.yrs(pay)}],
+  note:note};
+}});
+})();
+</script>
+</body>
+</html>

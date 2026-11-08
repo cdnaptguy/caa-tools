@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>Sell vs. Refinance &amp; Hold | CAA Apartment Investor Tools</title>
+<meta name="description" content="Compare after-tax cash from selling an apartment building with tax-free equity from a refinance, and the cash flow the building still produces if you keep it.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/sell-vs-refinance.html">
+<meta property="og:title" content="Sell vs. Refinance &amp; Hold | Canadian Apartment Advisors">
+<meta property="og:description" content="Compare after-tax cash from selling an apartment building with tax-free equity from a refinance, and the cash flow the building still produces if you keep it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/sell-vs-refinance.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>Sell vs. Refinance &amp; Hold</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;Cash out or keep it?&rdquo;</p>
+  <p class="sub">The real decision long-term owners face. Compare after-tax cash from a sale against equity pulled out through a refinance &mdash; and the cash flow the building still throws off if you keep it.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p><b>Sell:</b> value less selling costs, the mortgage payout and your estimate of tax.</p>
+<p><b>Refinance:</b> the new loan is the lesser of the LTV cap and the loan NOI can carry at the lender's DSCR floor (Canadian semi-annual compounding). Cash out is the new loan less the existing balance and refinance costs. If you enter a CMHC premium it's added to the loan, which raises debt service.</p>
+<h3>What it leaves out</h3>
+<ul><li>Investing the sale proceeds elsewhere, future appreciation and rent growth, and the eventual tax on a later sale.</li><li>Mortgage prepayment penalties on the existing loan unless you include them in selling or refinance costs.</li></ul>
+<p>Market context only &mdash; not legal or tax advice. Capital gains, CCA recapture, s.85 rollovers and estate freezes are accountant and lawyer territory; we're happy to work with yours. There is no 1031-style exchange in Canada.</p>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"sell_vs_refi",page:"sell-vs-refinance.html",
+groups:[
+ {title:"The building today",fields:[
+  {k:"value",label:"Estimated building value",def:3000000,prefix:"$",step:10000},
+  {k:"bal",label:"Current mortgage balance",def:600000,prefix:"$",step:10000},
+  {k:"noi",label:"Net operating income",def:190000,prefix:"$",suffix:"/yr",step:1000}]},
+ {title:"Path A — sell",fields:[
+  {k:"sc",label:"Selling costs",def:3,suffix:"%",step:0.25,hint:"Commission, legal, adjustments, any mortgage payout penalty."},
+  {k:"tax",label:"Estimated tax on sale",def:250000,prefix:"$",step:5000,hint:"Capital gains plus CCA recapture &mdash; for long-hold owners recapture is often the bigger surprise. Get this number from your accountant."}]},
+ {title:"Path B — refinance",fields:[
+  {k:"ltv",label:"Refinance LTV",def:75,suffix:"%",step:1,pair:"start",hint:"CMHC: up to 85%. Conventional: 65–75%."},
+  {k:"dscr",label:"Lender DSCR floor",def:1.2,suffix:"×",step:0.05,pair:"end",hint:"CMHC ~1.10, conventional 1.20–1.25."},
+  {k:"rate",label:"Refinance rate",def:4.5,suffix:"%",step:0.05,pair:"start"},
+  {k:"am",label:"Amortization",def:40,suffix:"yrs",step:1,min:5,max:50,pair:"end"},
+  {k:"rc",label:"Refinance costs",def:1,suffix:"% of loan",step:0.1,pair:"start",hint:"Lender fee, legal, appraisal."},
+  {k:"prem",label:"Insurance premium",def:0,suffix:"%",step:0.05,pair:"end",hint:"If CMHC-insured; added to the loan."}]}
+],
+compute:function(v){
+ var costs=v.value*v.sc/100, netSale=v.value-costs-v.bal-v.tax;
+ var byL=v.value*v.ltv/100, byD=m.maxLoanFromNOI(v.noi,v.rate,v.am,v.dscr)/(1+v.prem/100);
+ var base=Math.min(byL,byD), bind=byD<byL?"DSCR":"LTV", total=base*(1+v.prem/100);
+ var rc=base*v.rc/100, cash=base-v.bal-rc;
+ var ads=m.payment(total,v.rate,v.am)*12, cf=v.noi-ads, dscr=ads>0?v.noi/ads:Infinity;
+ var eqLeft=v.value-total;
+ return {
+  leaders:[{label:"Sell: after-tax proceeds",value:f.money(netSale),tone:netSale>=0?"":"bad"},
+           {label:"Refinance: cash out",value:f.money(cash),tone:cash>0?"good":"bad"},
+           {label:"Refinance: cash flow kept",value:f.money(cf)+"/yr",tone:cf>=0?"good":"bad"}],
+  banner: cash<=0 ? "At these terms the new loan doesn't clear the existing mortgage and costs, so a refinance releases no cash." : "",
+  rows:[{h:"Path A — sell"},
+   {l:"Sale price",v:f.money(v.value)},
+   {l:"Selling costs",v:f.neg(costs),sub:1},
+   {l:"Mortgage payout",v:f.neg(v.bal),sub:1},
+   {l:"Estimated tax",v:f.neg(v.tax),sub:1},
+   {l:"Net after-tax proceeds",v:f.money(netSale),strong:1},
+   {h:"Path B — refinance & hold"},
+   {l:"Max loan by LTV ("+v.ltv+"%)",v:f.money(byL),sub:1,tone:bind==="LTV"?"bad":""},
+   {l:"Max loan by DSCR ("+v.dscr.toFixed(2)+"×)",v:f.money(byD),sub:1,tone:bind==="DSCR"?"bad":""},
+   {l:"New loan (before premium)",v:f.money(base)},
+   {l:"Pay out existing mortgage",v:f.neg(v.bal),sub:1},
+   {l:"Refinance costs",v:f.neg(rc),sub:1},
+   {l:"Cash out (not taxable income)",v:f.money(cash),strong:1,tone:cash>0?"good":"bad"},
+   {l:"New annual debt service",v:f.neg(ads)},
+   {l:"DSCR after refinance",v:f.times(dscr)},
+   {l:"Annual cash flow kept",v:f.money(cf),strong:1,tone:cf>=0?"good":"bad"},
+   {l:"Equity still in the building",v:f.money(eqLeft)}],
+  note:"Refinance proceeds are borrowed money, not income, so Path B's cash arrives untaxed &mdash; but the gain and recapture don't disappear, they wait. Selling crystallizes tax now in exchange for a clean exit. Share sales, s.85 rollovers and estate planning can change this picture entirely, which is exactly why this calculator ends where your accountant begins."};
+}});
+})();
+</script>
+</body>
+</html>

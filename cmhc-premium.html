@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
+<title>CMHC Premium Calculator | CAA Apartment Investor Tools</title>
+<meta name="description" content="Estimate the CMHC multi-unit mortgage insurance premium: base rate by LTV, amortization surcharge and MLI Select points discount.">
+<link rel="canonical" href="https://tools.canadianapartmentadvisors.com/cmhc-premium.html">
+<meta property="og:title" content="CMHC Premium Calculator | Canadian Apartment Advisors">
+<meta property="og:description" content="Estimate the CMHC multi-unit mortgage insurance premium: base rate by LTV, amortization surcharge and MLI Select points discount.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tools.canadianapartmentadvisors.com/cmhc-premium.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="assets/toolkit.css">
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a href="index.html">&larr; All tools</a><a href="https://www.canadianapartmentadvisors.com/" rel="noopener">canadianapartmentadvisors.com</a></div>
+<header>
+  <div class="eyebrow">Canadian Apartment Advisors &middot; Owner&rsquo;s Toolkit</div>
+  <h1>CMHC Premium Calculator</h1>
+  <div class="accent-rule"></div>
+  <p class="question">&ldquo;What does insurance cost?&rdquo;</p>
+  <p class="sub">Estimate the mortgage insurance premium on a standard existing rental: a base rate set by loan-to-value, a surcharge for amortization beyond 25 years, and the MLI Select discount applied after surcharges.</p>
+</header>
+<div class="layout">
+  <aside class="panel" id="inputs" aria-label="Inputs"></aside>
+  <section id="results" aria-live="polite" aria-label="Results"></section>
+</div>
+<section class="method">
+<h2>How this is calculated</h2>
+<p>Premium rate = base rate for the LTV band + 0.25% for each 5 years (or part) of amortization beyond 25, then reduced by the MLI Select discount (10%, 20% or 30% for 50, 70 or 100 points). Premium = loan &times; net rate.</p>
+<p>Default grid: 2.60% to 65% LTV, 2.85% to 70%, 3.35% to 75%, 4.35% to 80%, 5.35% to 85%, with MLI Select bands of 5.90% to 90% and 6.15% to 95% &mdash; the schedule for applications from July 14, 2025 as reported by industry sources. Every rate is editable so the page stays useful as CMHC updates pricing.</p>
+<h3>What it leaves out</h3>
+<ul><li>CMHC application fees (per suite), non-residential space surcharges, second-mortgage and other surcharges.</li><li>Provincial sales tax on premiums in provinces that charge it (none in Alberta).</li><li>Construction financing and non-standard housing types, which price differently.</li></ul>
+<p>This is an estimate, not a quote. CMHC sets the final premium at underwriting.</p>
+<h3>Sources</h3>
+<ul><li><a href="https://assets.cmhc-schl.gc.ca/sf/project/archive/publications_4/66798_w_20250513-002a.pdf" rel="noopener">CMHC</a> &mdash; multi-unit mortgage loan insurance premiums</li><li><a href="https://www.reic.ca/article-sept5-25.html" rel="noopener">REIC</a> &mdash; how the new CMHC premiums affect your pro forma</li></ul>
+</section>
+<nav class="related" id="related" aria-label="More tools"></nav>
+<div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
+<p class="disclaimer">Premium grid defaults follow the CMHC multi-unit schedule for applications from July 14, 2025, as published by secondary sources; verify against current CMHC pricing before relying on any figure. Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract. Figures marked SAMPLE are illustrative placeholders, not sourced data. Not an appraisal, a broker opinion of value, or lending, legal or tax advice.</p>
+</div>
+<script src="assets/toolkit.js"></script>
+<script>
+(function(){
+"use strict";
+var m=CAA.m,f=CAA.f;
+CAA.tool({id:"cmhc_premium",page:"cmhc-premium.html",
+groups:[
+ {title:"Loan",fields:[
+  {k:"value",label:"Lending value",def:3000000,prefix:"$",step:10000},
+  {k:"ltv",label:"Loan-to-value",def:85,suffix:"%",step:1,min:1,max:95,pair:"start"},
+  {k:"am",label:"Amortization",def:40,suffix:"yrs",step:1,min:25,max:50,pair:"end"},
+  {k:"tier",label:"Program",def:"0",type:"select",options:[["0","CMHC Standard rental (no points)"],["50","MLI Select — 50 points (10% discount)"],["70","MLI Select — 70 points (20% discount)"],["100","MLI Select — 100 points (30% discount)"]]}]},
+ {title:"Base premium grid (editable)",note:"Purchase or refinance of standard existing rental. Bands above 85% apply to MLI Select only.",fields:[
+  {k:"g65",label:"Up to 65% LTV",def:2.60,suffix:"%",step:0.05,pair:"start"},
+  {k:"g70",label:"Up to 70%",def:2.85,suffix:"%",step:0.05,pair:"end"},
+  {k:"g75",label:"Up to 75%",def:3.35,suffix:"%",step:0.05,pair:"start"},
+  {k:"g80",label:"Up to 80%",def:4.35,suffix:"%",step:0.05,pair:"end"},
+  {k:"g85",label:"Up to 85%",def:5.35,suffix:"%",step:0.05,pair:"start"},
+  {k:"g90",label:"Up to 90%",def:5.90,suffix:"%",step:0.05,pair:"end"},
+  {k:"g95",label:"Up to 95%",def:6.15,suffix:"%",step:0.05,pair:"start"},
+  {k:"sur",label:"Surcharge per 5 yrs > 25",def:0.25,suffix:"%",step:0.05,pair:"end"}]}
+],
+compute:function(v){
+ var tier=+v.tier, disc={0:0,50:10,70:20,100:30}[tier]||0;
+ var bands=[[65,v.g65],[70,v.g70],[75,v.g75],[80,v.g80],[85,v.g85],[90,v.g90],[95,v.g95]];
+ var band=bands.find(function(b){return v.ltv<=b[0]+1e-9})||bands[bands.length-1];
+ var loan=v.value*v.ltv/100, base=band[1];
+ var steps=Math.max(0,Math.ceil((v.am-25)/5-1e-9)), amS=steps*v.sur;
+ var gross=base+amS, net=gross*(1-disc/100), prem=loan*net/100;
+ var warn=[];
+ if(tier===0&&v.ltv>85) warn.push("Standard CMHC rental insurance tops out at 85% LTV; above that requires MLI Select.");
+ if(tier===50&&v.ltv>85) warn.push("50 points generally allows up to 85% LTV on existing buildings.");
+ if(v.ltv>95) warn.push("No CMHC rental program goes above 95% LTV.");
+ if(tier===0&&v.am>40) warn.push("Standard CMHC rental amortization is generally up to 40 years; longer requires MLI Select.");
+ var full=loan*gross/100*0.30;
+ return {
+  leaders:[{label:"Premium",value:f.money(prem)},{label:"Net premium rate",value:f.pts(net)},{label:"Insured loan incl. premium",value:f.money(loan+prem)}],
+  banner: warn.join(" "),
+  rows:[{h:"Rate build-up"},
+   {l:"Loan amount",v:f.money(loan)},
+   {l:"Base premium (band to "+band[0]+"% LTV)",v:f.pts(base)},
+   {l:"Amortization surcharge ("+steps+" × "+v.sur.toFixed(2)+"%)",v:"+"+f.pts(amS),sub:1},
+   {l:"Gross premium rate",v:f.pts(gross)},
+   {l:"MLI Select discount ("+disc+"%)",v:"−"+f.pts(gross-net),sub:1,tone:disc>0?"good":""},
+   {l:"Net premium rate",v:f.pts(net),strong:1},
+   {h:"Dollars"},
+   {l:"Premium",v:f.money(prem),strong:1},
+   {l:"Total insured loan if capitalized",v:f.money(loan+prem)},
+   {l:"Premium as % of value",v:f.pct(v.value>0?prem/v.value:NaN)}],
+  note:"The premium is almost always added to the loan, so the real question is what it does to your payment and your equity at exit &mdash; not the sticker number. Points tiers carry real money: on this loan, the gap between no points and 100 points is about "+f.money(full)+" of premium."};
+}});
+})();
+</script>
+</body>
+</html>
