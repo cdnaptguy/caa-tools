@@ -22,7 +22,7 @@ ul{list-style:none;padding:0;margin:36px 0 0;border-top:1px solid var(--rule)}
 li a{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:20px 0;border-bottom:1px solid var(--rule);color:inherit;text-decoration:none}
 li a:hover .t{color:var(--gold-text)}
 li a:focus-visible{outline:2px solid var(--gold-text);outline-offset:4px}
-.t{font-size:18px;font-weight:600}
+.t{font-size:18px;font-weight:600;display:flex;align-items:center;gap:10px}.tool-icon{width:26px;height:26px;flex:none;color:var(--gold-text)}.section-title{font-size:24px;margin:42px 0 0}
 .d{grid-column:1;color:var(--ink-2);font-size:14px}
 .u{grid-column:1;font-size:12px;color:var(--ink-3)}
 .u b{font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:11px;color:var(--gold-text);margin-right:6px}
@@ -31,70 +31,78 @@ li a:focus-visible{outline:2px solid var(--gold-text);outline-offset:4px}
 .notice b{display:block;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text);margin-bottom:4px}
 .disc{font-size:11px;color:var(--ink-3);margin-top:16px;max-width:none}
 </style>
+<link rel="stylesheet" href="assets/navigation.css">
 </head>
 <body>
 <div class="wrap">
+<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="https://www.canadianapartmentadvisors.com/">CAA</a></li><li><a href="index.html">Tools</a></li><li aria-current="page">Investor Tools</li></ol></nav>
   <img class="brand" src="https://assets.cdn.filesafe.space/Cj4du4yt6QYgDgph4gZR/media/69051c3b817ba0861f079683.png" alt="Canadian Apartment Advisors" width="530" height="360" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
   <div class="brand-fallback">Canadian Apartment Advisors</div>
-  <h1>Apartment Investor Tools</h1>
+  <h1 id="investor-tools">Apartment Investor Tools</h1>
   <div class="rule"></div>
   <p>Working calculators from the Canadian Apartment Advisors team for Alberta apartment owners and buyers.</p>
   <ul>
     <li><a href="building-value.html">
-      <span class="t">Building Value Estimator</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#building-value"/></svg>Building Value Estimator</span>
       <span class="d">Income-approach value from rents, vacancy and expenses, across a cap-rate band.</span>
-      <span class="u"><b>What's it worth?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="cash-flow.html">
-      <span class="t">Multifamily Cash Flow</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#cash-flow"/></svg>Multifamily Cash Flow</span>
       <span class="d">Annual cash flow, DSCR and cash-on-cash on a purchase, with Canadian mortgage math.</span>
-      <span class="u"><b>What does it earn?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="mortgage-calculator.html">
-      <span class="t">Commercial Mortgage</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#mortgage-calculator"/></svg>Commercial Mortgage</span>
       <span class="d">Payment, term-end balance and interest cost, with amortizations to 50 years.</span>
-      <span class="u"><b>What's the payment?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="loan-sizing.html">
-      <span class="t">Maximum Loan Sizing</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#loan-sizing"/></svg>Maximum Loan Sizing</span>
       <span class="d">The lesser of the LTV and DSCR limits, with an insured versus conventional comparison.</span>
-      <span class="u"><b>How much will they lend?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="cmhc-premium.html">
-      <span class="t">CMHC Premium</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#cmhc-premium"/></svg>CMHC Premium</span>
       <span class="d">Estimated multi-unit insurance premium by LTV, amortization and MLI Select tier.</span>
-      <span class="u"><b>What does insurance cost?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="mli-select-points.html">
-      <span class="t">MLI Select Points</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#mli-select-points"/></svg>MLI Select Points</span>
       <span class="d">Score affordability, energy and accessibility points and the tier they unlock.</span>
-      <span class="u"><b>Do I qualify?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="renovation-lift.html">
-      <span class="t">Renovation Lift</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#renovation-lift"/></svg>Renovation Lift</span>
       <span class="d">Value created per dollar spent on suite renovations, with downtime.</span>
-      <span class="u"><b>Is the upgrade worth it?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="sell-vs-refinance.html">
-      <span class="t">Sell vs. Refinance</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#sell-vs-refinance"/></svg>Sell vs. Refinance</span>
       <span class="d">After-tax sale proceeds against refinance cash out and ongoing cash flow.</span>
-      <span class="u"><b>Cash out or keep it?</b></span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b></span>
       <span class="go">Open</span>
     </a></li>
     <li><a href="financing-comparator.html">
-      <span class="t">Deal Financing Comparator</span>
+      <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#financing-comparator"/></svg>Deal Financing Comparator</span>
       <span class="d">Conventional, CMHC Standard, MLI Select and the proposed private-insured format, sized side by side with cash to close and payback.</span>
-      <span class="u"><b>Updated Nov 7, 2026</b>Added the proposed Budget 2026 private mortgage insurance format for 5–50 suite buildings.</span>
+      <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b>Added the proposed Budget 2026 private mortgage insurance format for 5–50 suite buildings.</span>
       <span class="go">Open</span>
     </a></li>
   </ul>
+  <h2 class="section-title" id="games">Games</h2>
+  <ul><li><a href="games/maple-mile/">
+    <span class="t"><svg class="tool-icon" aria-hidden="true" focusable="false"><use href="assets/tool-icons.svg#maple-mile"/></svg>Maple Mile</span>
+    <span class="d">A Canadian property arcade game. Collect buildings, earn rent, and survive a 90-second run.</span>
+    <span class="u"><b>Updated <time datetime="2026-11-08">Nov 8, 2026</time></b>First playable release.</span><span class="go">Play</span>
+  </a></li></ul>
   <div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
   <p class="disc">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract.</p>
 </div>

@@ -1,0 +1,10 @@
+/* Shared navigation for the investor toolkit. */
+.breadcrumbs{margin:0 0 22px;font-size:12px;line-height:1.6;color:var(--ink-3)}
+.breadcrumbs ol{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 0;list-style:none;margin:0;padding:0;border:0}
+.breadcrumbs li{display:inline;min-width:0}
+.breadcrumbs li+li::before{content:"/";display:inline-block;margin:0 9px;color:var(--ink-3)}
+.breadcrumbs li a{display:inline;padding:0;border:0;color:var(--gold-text);text-decoration:none;font:inherit;letter-spacing:normal;text-transform:none}
+.breadcrumbs li a:hover{text-decoration:underline}
+.breadcrumbs a:focus-visible{outline:2px solid var(--gold-text);outline-offset:3px}
+.breadcrumbs [aria-current="page"]{color:var(--ink-2)}
+@media print{.breadcrumbs{display:none}}
