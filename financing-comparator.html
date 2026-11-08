@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4LN55ZWS42"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4LN55ZWS42');</script>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -322,6 +324,8 @@ function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 const $=s=>document.querySelector(s);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const colorOf=f=>css(SERIES[(f.color??0)%SERIES.length]);
+const track=(n,p)=>{try{window.gtag&&window.gtag("event",n,Object.assign({tool:"financing_comparator"},p||{}))}catch(e){}};
+let inputTimer=null;const trackInputs=k=>{clearTimeout(inputTimer);inputTimer=setTimeout(()=>track("deal_inputs_changed",{field:k}),1500)};
 
 /* ---- formatting ---- */
 const money=v=>v==null||!isFinite(v)?"–":(v<0?"-$":"$")+Math.round(Math.abs(v)).toLocaleString("en-CA");
@@ -402,8 +406,8 @@ function vsConv(r,c){
 /* ---- UI: deal inputs ---- */
 const F={name:"#d-name",units:"#d-units",price:"#d-price",noi:"#d-noi",lv:"#d-lv",close:"#d-close",growth:"#d-growth",horizon:"#d-horizon",nw:"#d-nw",ptax:"#d-ptax"};
 function fillDeal(){for(const k in F){$(F[k]).value=deal[k]}}
-for(const k in F){$(F[k]).addEventListener("input",e=>{deal[k]=k==="name"?e.target.value:parseFloat(e.target.value)||0;deal.isSample=false;save(DEAL_KEY,deal);render()})}
-$("#btn-sample").addEventListener("click",()=>{const show=deal.show;deal=clone(SAMPLE_DEAL);deal.show=show;save(DEAL_KEY,deal);fillDeal();render()});
+for(const k in F){$(F[k]).addEventListener("input",e=>{deal[k]=k==="name"?e.target.value:parseFloat(e.target.value)||0;deal.isSample=false;save(DEAL_KEY,deal);trackInputs(k);render()})}
+$("#btn-sample").addEventListener("click",()=>{track("sample_reload");const show=deal.show;deal=clone(SAMPLE_DEAL);deal.show=show;save(DEAL_KEY,deal);fillDeal();render()});
 
 function renderChips(){
   $("#chips").innerHTML=formats.map(f=>{const on=deal.show.includes(f.id);return `<label class="chip${on?" on":""}"><input type="checkbox" data-id="${f.id}"${on?" checked":""}><span class="sw" style="background:${colorOf(f)}"></span>${esc(f.name)}</label>`}).join("");
@@ -538,24 +542,25 @@ function renderFormats(){
    <div class="actions"><button class="btn small" data-act="dup">Duplicate</button>${f.rateSample?`<button class="btn ghost small" data-act="confirm">Mark rate as quoted</button>`:""}<button class="btn ghost small" data-act="del">Remove</button></div></div>`).join("");
   $("#fmtGrid").querySelectorAll(".fmt").forEach(card=>{
     const i=+card.dataset.i;
-    card.querySelectorAll("[data-k]").forEach(inp=>inp.addEventListener("change",()=>{const k=inp.dataset.k;const isNum=FIELDS.find(x=>x[0]===k)?.[2]==="num";formats[i][k]=isNum?(parseFloat(inp.value)||0):inp.value;if(k==="rate")formats[i].rateSample=false;persist();if(k==="name"||k==="status"||k==="rate")renderFormats()}));
+    card.querySelectorAll("[data-k]").forEach(inp=>inp.addEventListener("change",()=>{const k=inp.dataset.k;const isNum=FIELDS.find(x=>x[0]===k)?.[2]==="num";formats[i][k]=isNum?(parseFloat(inp.value)||0):inp.value;if(k==="rate")formats[i].rateSample=false;track("format_edit",{field:k});persist();if(k==="name"||k==="status"||k==="rate")renderFormats()}));
     card.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.act;
       if(a==="dup"){const c=clone(formats[i]);c.id="f"+Date.now().toString(36);c.name=formats[i].name+" (copy)";c.status="custom";c.color=nextColor();formats.splice(i+1,0,c);deal.show.push(c.id)}
       if(a==="del"){deal.show=deal.show.filter(x=>x!==formats[i].id);formats.splice(i,1)}
       if(a==="confirm"){formats[i].rateSample=false}
+      track(a==="dup"?"format_duplicate":a==="del"?"format_remove":"format_rate_confirmed");
       persist();renderFormats()}));
   });
 }
 function nextColor(){const used=new Set(formats.map(f=>f.color));for(let c=0;c<8;c++)if(!used.has(c))return c;return formats.length%8}
 function persist(){save(STORE_KEY,formats);save(DEAL_KEY,deal);render()}
-$("#btn-add").addEventListener("click",()=>{const f={id:"f"+Date.now().toString(36),name:"New format",status:"custom",insurer:"",maxLTV:75,amort:30,term:5,rate:5,rateSample:true,dscr:1.2,lenderFee:1,appFee:0,grid:"",surcharge:0,discount:0,noiAdj:0,minUnits:1,maxUnits:0,nwPct:0,nwMin:0,color:nextColor(),notes:""};formats.push(f);deal.show.push(f.id);persist();renderFormats();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})});
+$("#btn-add").addEventListener("click",()=>{track("format_add");const f={id:"f"+Date.now().toString(36),name:"New format",status:"custom",insurer:"",maxLTV:75,amort:30,term:5,rate:5,rateSample:true,dscr:1.2,lenderFee:1,appFee:0,grid:"",surcharge:0,discount:0,noiAdj:0,minUnits:1,maxUnits:0,nwPct:0,nwMin:0,color:nextColor(),notes:""};formats.push(f);deal.show.push(f.id);persist();renderFormats();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})});
 let ioMode="export";
-$("#btn-export").addEventListener("click",()=>{ioMode="export";$("#ioTitle").textContent="Export formats";$("#ioHelp").textContent="Copy this text and share it. A teammate can paste it under Import formats.";$("#io-text").value=JSON.stringify(formats,null,1);$("#io-act").textContent="Copy";$("#io-msg").textContent="";$("#ioPanel").hidden=false});
+$("#btn-export").addEventListener("click",()=>{ioMode="export";track("formats_export");$("#ioTitle").textContent="Export formats";$("#ioHelp").textContent="Copy this text and share it. A teammate can paste it under Import formats.";$("#io-text").value=JSON.stringify(formats,null,1);$("#io-act").textContent="Copy";$("#io-msg").textContent="";$("#ioPanel").hidden=false});
 $("#btn-import").addEventListener("click",()=>{ioMode="import";$("#ioTitle").textContent="Import formats";$("#ioHelp").textContent="Paste exported formats. They replace the current set.";$("#io-text").value="";$("#io-act").textContent="Load formats";$("#io-msg").textContent="";$("#ioPanel").hidden=false});
 $("#io-close").addEventListener("click",()=>{$("#ioPanel").hidden=true});
 $("#io-act").addEventListener("click",()=>{const ta=$("#io-text");
   if(ioMode==="export"){navigator.clipboard?.writeText(ta.value).then(()=>{$("#io-msg").textContent="Copied."},()=>{ta.select();$("#io-msg").textContent="Selected. Press Ctrl/Cmd+C to copy."})||(ta.select())}
-  else{try{const a=JSON.parse(ta.value);if(!Array.isArray(a)||!a.every(f=>f&&f.id&&f.name&&isFinite(f.maxLTV)))throw 0;formats=a;deal.show=a.map(f=>f.id);persist();renderFormats();$("#io-msg").textContent=`Loaded ${a.length} formats.`}catch(e){$("#io-msg").textContent="That text isn't an exported format list. Copy it again from Export formats."}}});
+  else{try{const a=JSON.parse(ta.value);if(!Array.isArray(a)||!a.every(f=>f&&f.id&&f.name&&isFinite(f.maxLTV)))throw 0;formats=a;deal.show=a.map(f=>f.id);persist();renderFormats();track("formats_import");$("#io-msg").textContent=`Loaded ${a.length} formats.`}catch(e){$("#io-msg").textContent="That text isn't an exported format list. Copy it again from Export formats."}}});
 $("#btn-reset").addEventListener("click",()=>{$("#confirmReset").hidden=false});
 $("#reset-no").addEventListener("click",()=>{$("#confirmReset").hidden=true});
 $("#reset-yes").addEventListener("click",()=>{formats=clone(DEFAULT_FORMATS);deal.show=formats.map(f=>f.id);persist();renderFormats();$("#confirmReset").hidden=true});
@@ -564,6 +569,7 @@ $("#reset-yes").addEventListener("click",()=>{formats=clone(DEFAULT_FORMATS);dea
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t?"true":"false"));
   ["compare","formats","notes"].forEach(v=>$("#view-"+v).hidden=v!==t.dataset.view);
+  track("tool_tab_view",{tab:t.dataset.view});
   if(t.dataset.view==="formats")renderFormats(); if(t.dataset.view==="compare")render();
 }));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",render);
