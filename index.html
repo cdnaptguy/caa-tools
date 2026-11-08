@@ -8,33 +8,46 @@
 <title>CAA Tools</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap">
 <style>
-:root{--bg:#FAF8F4;--card:#FFFFFF;--ink:#1C1C1C;--ink-2:#5A5A5A;--rule:#E4E2DE;--gold:#A87A32;--gold-text:#8E671F;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#141412;--card:#1C1B19;--ink:#EEEBE5;--ink-2:#BDB8AE;--rule:#33312D;--gold:#BE9755;--gold-text:#CDA867;color-scheme:dark}}
+:root{--bg:#FAF8F4;--card:#FFFFFF;--ink:#1C1C1C;--ink-2:#5A5A5A;--ink-3:#6B6B6B;--rule:#E4E2DE;--gold:#A87A32;--gold-text:#8E671F;--warn-soft:#FBF1DC;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141412;--card:#1C1B19;--ink:#EEEBE5;--ink-2:#BDB8AE;--ink-3:#A39E95;--rule:#33312D;--gold:#BE9755;--gold-text:#CDA867;--warn-soft:#2A241A;color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Roboto","Helvetica Neue",Arial,sans-serif}
-.wrap{max-width:880px;margin:0 auto;padding:48px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
-.eyebrow{font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-text)}
-h1{font-size:40px;font-weight:600;letter-spacing:-.01em;margin:6px 0 0;line-height:1.1}
+.wrap{max-width:880px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+.brand{display:block;width:150px;max-width:50%;height:auto;margin:0 0 28px}
+.brand-fallback{display:none;font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-text);margin:0 0 6px}
+h1{font-size:40px;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.1;text-wrap:balance}
 .rule{width:56px;height:2px;background:var(--gold);margin:16px 0 20px}
-p{color:var(--ink-2);max-width:62ch}
-ul{list-style:none;padding:0;margin:32px 0 0;border-top:1px solid var(--rule)}
-li a{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:18px 0;border-bottom:1px solid var(--rule);color:inherit;text-decoration:none}
+p{color:var(--ink-2);max-width:62ch;margin:0}
+ul{list-style:none;padding:0;margin:36px 0 0;border-top:1px solid var(--rule)}
+li a{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:20px 0;border-bottom:1px solid var(--rule);color:inherit;text-decoration:none}
 li a:hover .t{color:var(--gold-text)}
+li a:focus-visible{outline:2px solid var(--gold-text);outline-offset:4px}
 .t{font-size:18px;font-weight:600}
 .d{grid-column:1;color:var(--ink-2);font-size:14px}
-.go{grid-row:1/3;grid-column:2;align-self:center;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text)}
-.disc{font-size:11px;color:var(--ink-2);margin-top:48px;border-top:1px solid var(--rule);padding-top:12px;max-width:none}
+.u{grid-column:1;font-size:12px;color:var(--ink-3)}
+.u b{font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:11px;color:var(--gold-text);margin-right:6px}
+.go{grid-row:1/4;grid-column:2;align-self:center;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text)}
+.notice{margin-top:48px;padding:14px 16px;background:var(--warn-soft);font-size:13px;line-height:1.6;color:var(--ink);max-width:none}
+.notice b{display:block;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text);margin-bottom:4px}
+.disc{font-size:11px;color:var(--ink-3);margin-top:16px;max-width:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Canadian Apartment Advisors</div>
+  <img class="brand" src="https://assets.cdn.filesafe.space/Cj4du4yt6QYgDgph4gZR/media/69051c3b817ba0861f079683.png" alt="Canadian Apartment Advisors" width="530" height="360" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="brand-fallback">Canadian Apartment Advisors</div>
   <h1>Apartment Investor Tools</h1>
   <div class="rule"></div>
   <p>Working calculators from the Canadian Apartment Advisors team for Alberta apartment owners and buyers.</p>
   <ul>
-    <li><a href="financing-comparator.html"><span class="t">Deal Financing Comparator</span><span class="d">Conventional, CMHC Standard, MLI Select and the proposed private-insured format, sized side by side with cash to close and payback.</span><span class="go">Open</span></a></li>
+    <li><a href="financing-comparator.html">
+      <span class="t">Deal Financing Comparator</span>
+      <span class="d">Conventional, CMHC Standard, MLI Select and the proposed private-insured format, sized side by side with cash to close and payback.</span>
+      <span class="u"><b>Updated Nov 7, 2026</b>Added the proposed Budget 2026 private mortgage insurance format for 5–50 suite buildings.</span>
+      <span class="go">Open</span>
+    </a></li>
   </ul>
+  <div class="notice"><b>Please read</b>These are created largely using AI for entertainment and learning purposes and should not be trusted. Any results from this should be checked and used for educational purposes only, and not to reach conclusions on your own deals, etc.</div>
   <p class="disc">Canadian Apartment Advisors operates under Hughes Commercial Realty Group. The information contained herein was obtained from sources deemed to be reliable and is believed to be true; it has not been verified and as such, cannot be warranted nor form a part of any future contract.</p>
 </div>
 </body>
